@@ -1,0 +1,4407 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+
+<script>
+  // Previne o flash de tema (FOUT) executando antes de renderizar o body
+  (function() {
+    var theme = localStorage.getItem('suinotech_theme');
+    if (!theme) {
+      theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+
+
+<link rel="canonical" href="https://suinotech.com.br/">
+<meta property="og:title" content="SuinoTech | Gestão de Suinocultura">
+<meta property="og:description" content="Plataforma de gestão suinícola conectando dados de produção ao resultado financeiro.">
+<meta property="og:image" content="https://suinotech.com.br/banner.jpg">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://images.unsplash.com">
+<link rel="preconnect" href="https://plus.unsplash.com">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- Meta Tags para iOS e Android PWA (Tela Cheia Nativa) -->
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SuinoTech">
+<meta name="theme-color" content="#0d1513">
+
+<title>SuinoTech | Gestão Inteligente de Suinocultura & Precificação Transparente</title>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+
+<!-- FontAwesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="icon" type="image/svg+xml" href="SUINOTECH.svg">
+
+<style>
+
+.theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--superficie-2);
+      border: 1px solid var(--linha);
+      color: var(--texto);
+      padding: 8px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: var(--corpo);
+      font-size: 13.5px;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+      flex-shrink: 0;
+      margin-left: auto; /* Alinha o botão à direita */
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--rosa);
+      background: var(--superficie);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(255, 77, 141, 0.25);
+    }
+
+    .theme-toggle-btn i {
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+
+    .theme-toggle-btn:hover i {
+      transform: rotate(20deg);
+    }
+
+    @media (max-width: 992px) {
+      .theme-toggle-btn {
+        margin-left: auto;
+        padding: 6px 12px;
+        font-size: 12.5px;
+      }
+    }
+
+/* Classe utilitária para leitores de tela */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Menus dropdown no modo escuro */
+option {
+  background-color: #1b2b26;
+  color: #e8f0ec;
+}
+
+#funcionalidades .grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 1200px) {
+  #funcionalidades .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  #funcionalidades .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filtros-mercado-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .filtros-p {
+      display: inline-flex;
+      gap: 6px;
+      background: var(--superficie-2);
+      padding: 5px;
+      border-radius: 12px;
+      border: 1px solid var(--linha);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .filtros-p button {
+      font-family: var(--corpo);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--suave);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filtros-p button:hover {
+      color: var(--texto);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .filtros-p button.active {
+      background: var(--rosa);
+      color: #1a0a12;
+      font-weight: 600;
+      border-color: var(--rosa);
+      box-shadow: 0 2px 10px rgba(255, 77, 141, 0.35);
+    }
+
+    @media (max-width: 768px) {
+      .filtros-mercado-wrapper {
+        align-items: flex-start;
+        width: 100%;
+      }
+      .filtros-p {
+        flex-wrap: wrap;
+        width: 100%;
+      }
+      .filtros-p button {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+
+
+/* ==========================================================================
+   PALETA E VARIÁVEIS CSS REVISADAS (WCAG 2.1 AA COMPATÍVEL)
+   ========================================================================== */
+:root {
+  /* Cores de Marca & Semânticas */
+  --rosa: #ff4d8d;
+  --rosa-hover: #e63975;
+  --rosa-bg: rgba(255, 77, 141, 0.15);
+  --verde: #3fa37c;
+  --verde-hover: #328665;
+  --verde-bg: rgba(63, 163, 124, 0.15);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245, 158, 11, 0.15);
+
+  /* Tipografia */
+  --corpo: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --titulos: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --tec: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+  /* Modo Escuro (Padrão) */
+  --fundo: #0d1513;
+  --bg-overlay: rgba(13, 21, 19, 0.78);
+  --superficie: rgba(22, 36, 31, 0.75);
+  --superficie-2: rgba(30, 48, 41, 0.82);
+  --linha: rgba(63, 163, 124, 0.25);
+  --texto: #e8f0ec;
+  --suave: #a3b8b0;
+  --texto-destaque: #ffffff;
+  --topo-bg: rgba(13, 21, 19, 0.88);
+  --rodape-bg: rgba(8, 13, 11, 0.95);
+  --sombra-card: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --card-blur: blur(16px);
+}
+
+[data-theme="light"],
+body.light-mode {
+  --fundo: #f8fbfa;
+  --bg-overlay: rgba(248, 251, 250, 0.33);
+  --superficie: rgba(255, 255, 255, 0.98);
+  --superficie-2: rgba(241, 247, 244, 0.98);
+  --linha: rgba(34, 75, 60, 0.22);
+  --texto: #16241f;
+  --suave: #384d44;
+  --rosa: #c81e5d; /* Escurecido no modo claro para contraste > 4.5:1 */
+  --rosa-hover: #a6164b;
+  --verde: #1e7050;
+  --verde-hover: #16543c;
+  --verde-bg: rgba(30, 112, 80, 0.12);
+  --texto-destaque: #0d1513;
+  --topo-bg: rgba(255, 255, 255, 0.94);
+  --rodape-bg: rgba(226, 236, 231, 0.96);
+  --sombra-card: 0 10px 25px rgba(13, 21, 19, 0.08);
+}
+
+/* Corrija o fundo dos cartões, cabeçalho, rodapé e dropdowns: */
+.card,
+.w,
+.step-card,
+.modal-card,
+.price-output-box,
+.faq-item,
+.func-feature-card,
+.fluxo-card {
+  background-color: var(--superficie) !important;
+  border: 1px solid var(--linha) !important;
+  box-shadow: var(--sombra-card) !important;
+}
+
+.top {
+  background: var(--topo-bg);
+}
+
+.bottom {
+  background: var(--topo-bg);
+}
+
+footer {
+  background: var(--rodape-bg);
+}
+
+option {
+  background-color: var(--fundo);
+  color: var(--texto);
+}
+
+/* Garante legibilidade de textos que tinham style="color: #ffffff" dentro de cards */
+[data-theme="light"] .card [style*="color: #ffffff"],
+[data-theme="light"] .card [style*="color: #fff"],
+[data-theme="light"] .modal-card [style*="color: #ffffff"] {
+  color: var(--texto-destaque) !important;
+}
+
+/* ==========================================================================
+   2. RESET & LAYOUT DE TELA INTEIRA (FULL WIDTH)
+   ========================================================================== */
+* { 
+  box-sizing: border-box; 
+  -webkit-tap-highlight-color: transparent; /* Remove retângulo azul/cinza ao tocar no iOS e Android */
+}
+
+/* Evita que o efeito :hover fique 'preso' na tela ao tocar no celular */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    border-color: var(--rosa) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(255, 77, 141, 0.15);
+  }
+  .btn:hover {
+    background: var(--rosa-hover);
+    border-color: var(--rosa-hover);
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: 80px; width: 100%; }
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  font: 16px/1.65 var(--corpo);
+  color: var(--texto);
+  background: var(--fundo);
+  background-image: linear-gradient(rgba(13, 21, 19, 0.85), rgba(13, 21, 19, 0.85)), url('SUINOTECH_2.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+ background-size: 1800px auto;
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+.wrap { 
+  width: 100%; 
+  max-width: 100%; 
+  margin: 0 auto; 
+  padding: 0 40px; 
+}
+@media(max-width: 768px) {
+  .wrap { padding: 0 16px; }
+}
+
+h1, h2, h3, h4 { font-family: var(--titulos); font-weight: 500; line-height: 1.25; margin: 0 0 .5em; }
+h1 { font-size: clamp(32px, 5vw, 54px); }
+h2 { font-size: clamp(24px, 3.5vw, 36px); margin-top: 1.5em; }
+h3 { font-size: 22px; }
+h4 { font-size: 17px; }
+p { margin: 0 0 1em; max-width: 100%; }
+a { color: var(--rosa); text-decoration: none; transition: color 0.2s ease; }
+a:hover { color: #ff7aa8; }
+:focus-visible { outline: 3px solid var(--rosa); outline-offset: 2px; }
+.note { font: 12.5px/1.5 var(--tec); color: var(--suave); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--fundo); }
+::-webkit-scrollbar-thumb { background: var(--superficie-2); border-radius: 4px; border: 1px solid var(--linha); }
+::-webkit-scrollbar-thumb:hover { background: var(--rosa); }
+
+.text-rosa { color: var(--rosa) !important; }
+.text-verde { color: var(--verde) !important; }
+.text-white { color: #ffffff !important; }
+.text-suave { color: var(--suave) !important; }
+.text-amber { color: var(--amber) !important; }
+.text-xl { font-size: 1.25rem; }
+.text-lg { font-size: 1.125rem; }
+.text-sm { font-size: 0.875rem; }
+.font-semibold { font-weight: 600; }
+.mr-1 { margin-right: 0.25rem; }
+.mr-1\.5 { margin-right: 0.375rem; }
+.mr-2 { margin-right: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; }
+.space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-12 > * + * { margin-top: 3rem; }
+
+.hero { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: center; width: 100%; }
+.ctl { display: flex; gap: 10px; margin-top: 10px; }
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+  width: 100%;
+}
+.step-card {
+  background: var(--superficie);
+  border-left: 4px solid var(--rosa);
+  border-radius: 8px;
+  padding: 20px;
+  border-top: 1px solid var(--linha);
+  border-right: 1px solid var(--linha);
+  border-bottom: 1px solid var(--linha);
+}
+.step-card .step-num {
+  font: 12px var(--tec);
+  color: var(--rosa);
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.step-card h3 {
+  color: #ffffff;
+  font-size: 19px;
+  margin-bottom: 10px;
+}
+.step-card p {
+  color: var(--suave);
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* ==========================================================================
+   3. CABEÇALHO, MENU CENTRALIZADO E LOGO
+   ========================================================================== */
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(13, 21, 19, 0.95);
+  -webkit-backdrop-filter: blur(12px); /* Compatibilidade com iOS Safari antigo */
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--linha);
+  width: 100%;
+  padding-top: max(0px, env(safe-area-inset-top)); /* Protege a área do Notch/Dynamic Island do iPhone */
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  width: 100%;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 700 24px var(--titulos);
+  color: var(--rosa) !important;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.logo span { color: var(--rosa) !important; }
+
+nav#nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  margin: 0 15px;
+}
+
+nav#nav a {
+  padding: 8px 16px;
+  color: var(--suave);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: all .2s ease;
+  white-space: nowrap;
+  border-radius: 6px;
+}
+nav#nav a:hover, nav#nav a.on {
+  color: #ffffff;
+  background: var(--superficie-2);
+  border-color: var(--rosa);
+}
+
+.menu-btn {
+  display: none;
+  font: inherit;
+  color: var(--texto);
+  background: var(--superficie-2);
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+.bottom { display: none; }
+
+@media (max-width: 992px) {
+  .menu-btn { display: block; }
+  
+  #nav {
+    display: none;
+    width: 100%;
+    flex: 0 0 100%;
+    order: 3;
+    padding-top: 10px;
+    margin: 0;
+  }
+  #nav.aberto {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #nav a {
+    display: block;
+    margin: 0;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--linha);
+  }
+  
+  .bottom {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    justify-content: space-around;
+    background: var(--topo-bg);
+    border-top: 1px solid var(--linha);
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  }
+  .bottom a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-width: 50px;
+    margin: 0;
+    border: 0;
+    font-size: 11px;
+    color: var(--suave);
+    text-decoration: none;
+  }
+  .bottom a.on, .bottom a:hover { color: var(--rosa); }
+  .bottom i { font-size: 18px; }
+  body { padding-bottom: 72px; }
+}
+
+/* ==========================================================================
+   4. ESTRUTURA DE PÁGINAS E CARROSSEL DE IMAGENS DE PORCOS E GRANJAS
+   ========================================================================== */
+.page { display: none; padding: 40px 0 80px; width: 100%; }
+.page.on { display: block; }
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--linha);
+  margin-bottom: 40px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+.carousel-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.7s ease-in-out;
+  background-size: cover;
+  background-position: center center;
+  display: flex;
+  align-items: center;
+}
+.carousel-slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+.carousel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(13, 21, 19, 0.94) 0%, rgba(13, 21, 19, 0.75) 55%, rgba(13, 21, 19, 0.35) 100%);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 780px;
+}
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(22, 36, 31, 0.85);
+  border: 1px solid var(--linha);
+  color: var(--texto);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(6px);
+}
+.carousel-btn:hover {
+  background: var(--rosa);
+  color: #1a0a12;
+  border-color: var(--rosa);
+}
+.carousel-btn.prev { left: 20px; }
+.carousel-btn.next { right: 20px; }
+
+.carousel-indicators {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 10px;
+}
+.carousel-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+.carousel-dot.active {
+  background: var(--rosa);
+  width: 32px;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .carousel-container { height: 440px; }
+  .carousel-overlay { padding: 28px; max-width: 100%; }
+}
+
+/* ==========================================================================
+   5. COMPONENTES INSTITUCIONAIS E CARDS
+   ========================================================================== */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 6px 14px;
+  border: 1px solid var(--linha);
+  border-radius: 999px;
+  font: 12px var(--tec);
+  color: var(--suave);
+  background: var(--superficie-2);
+}
+.status span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rosa);
+  animation: pulso 2.4s ease-in-out infinite;
+}
+@keyframes pulso { 50% { opacity: .3; } }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 10px 10px 0;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: var(--rosa);
+  color: #1a0a12;
+  text-decoration: none;
+  font: 600 15px var(--corpo);
+  border: 2px solid var(--rosa);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(255, 77, 141, 0.25);
+}
+.btn:hover {
+  background: var(--rosa-hover);
+  border-color: var(--rosa-hover);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+.btn.sec {
+  background: transparent;
+  color: var(--rosa);
+  box-shadow: none;
+}
+.btn.sec:hover {
+  background: var(--rosa-bg);
+  color: var(--rosa);
+}
+
+.grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); width: 100%; }
+.card {
+  background: var(--superficie);
+  border: 1px solid var(--linha) !important;
+  border-radius: 16px;
+  padding: 24px;
+  transition: border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+.card:hover {
+  border-color: var(--rosa) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(255, 77, 141, 0.15);
+}
+.card.destaque { border-color: var(--rosa) !important; background: var(--superficie); box-shadow: 0 0 25px rgba(255,77,141,0.1); }
+.card p:last-child { margin-bottom: 0; }
+
+.foto-pig { 
+  display: block; 
+  width: 100%; 
+  height: 380px; /* Aumentado de 200px para 280px para mostrar a foto inteira */
+  object-fit: cover; 
+  object-position: center center; /* Centraliza o enquadramento */
+  border-radius: 12px; 
+  margin-bottom: 16px; 
+  border: 1px solid var(--linha);
+}
+
+label { display: block; font-weight: 600; margin: 14px 0 6px; font-size: 14px; color: var(--texto); }
+input[type=text], input[type=email], input[type=tel], input[type=number], select, textarea {
+  width: 100%;
+  padding: 12px 16px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--texto);
+  background: var(--superficie-2);
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  transition: border-color 0.2s ease;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--rosa);
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+}
+input[type=range]:focus { outline: none; }
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: var(--superficie-2);
+  border: 1px solid var(--linha);
+  border-radius: 9999px;
+}
+input[type=range]::-webkit-slider-thumb {
+  height: 22px;
+  width: 22px;
+  border-radius: 50%;
+  background: var(--rosa);
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -7px;
+  box-shadow: 0 0 12px rgba(255, 77, 141, 0.5);
+  border: 2px solid #ffffff;
+  transition: transform 0.15s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+.seletor, .filtros-p { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+.seletor button, .filtros-p button {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto);
+  background: var(--superficie-2);
+  border: 1px solid var(--linha);
+  border-radius: 999px;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.seletor button[aria-pressed=true], .filtros-p button.active {
+  background: var(--rosa);
+  border-color: var(--rosa);
+  color: #1a0a12;
+}
+
+.painel { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); width: 100%; }
+.w { background: var(--superficie); border: 1px solid var(--linha); border-radius: 14px; padding: 20px; }
+.chartbox { position: relative; height: 220px; }
+
+.alertas { 
+  list-style: none; 
+  margin: 0; 
+  padding: 0; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 10px; 
+}
+.alertas li { 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  font-size: 13.5px; 
+  padding: 12px 16px; 
+  border-radius: 10px; 
+  background: var(--superficie-2); 
+  border: 1px solid var(--linha); 
+  cursor: pointer; 
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+}
+.alertas li:hover { 
+  transform: translateX(4px); 
+  border-color: var(--rosa); 
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.alertas li i.icon-badge { 
+  flex: none; 
+  width: 28px; 
+  height: 28px; 
+  border-radius: 8px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 13px; 
+}
+
+.alertas li.a {
+  background: linear-gradient(90deg, rgba(255, 77, 141, 0.1) 0%, var(--superficie-2) 100%);
+  border-color: rgba(255, 77, 141, 0.3);
+}
+.alertas li.a i.icon-badge { 
+  background: rgba(255, 77, 141, 0.2); 
+  color: var(--rosa); 
+  border: 1px solid rgba(255, 77, 141, 0.4);
+}
+
+.alertas li.o {
+  background: linear-gradient(90deg, rgba(63, 163, 124, 0.1) 0%, var(--superficie-2) 100%);
+  border-color: rgba(63, 163, 124, 0.3);
+}
+.alertas li.o i.icon-badge { 
+  background: rgba(63, 163, 124, 0.2); 
+  color: var(--verde); 
+  border: 1px solid rgba(63, 163, 124, 0.4);
+}
+
+.player { position: relative; aspect-ratio: 16/9; border: 1px solid var(--linha); border-radius: 16px; background: var(--superficie); overflow: hidden; width: 100%; }
+.player video { width: 100%; height: 100%; background: #000; object-fit: cover; }
+.capa { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px; background: rgba(13,21,19,0.88); }
+.play { width: 68px; height: 68px; border-radius: 50%; border: 0; cursor: pointer; background: var(--rosa) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3 2l5 3-5 3z' fill='%231a0a12'/%3E%3C/svg%3E") center/50% no-repeat; box-shadow: 0 0 20px rgba(255,77,141,0.5); }
+
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; background: var(--superficie); }
+th, td { text-align: left; padding: 14px 16px; border: 1px solid var(--linha); vertical-align: middle; }
+th { background: var(--superficie-2); color: var(--texto); font-weight: 600; }
+.tabela { overflow-x: auto; border-radius: 12px; border: 1px solid var(--linha); width: 100%; }
+
+.badge-rosa {
+  background: var(--rosa-bg);
+  color: var(--rosa);
+  border: 1px solid var(--rosa);
+  padding: 4px 14px;
+  border-radius: 999px;
+  font: 12px var(--tec);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.badge-verde {
+  background: var(--verde-bg);
+  color: var(--verde);
+  border: 1px solid var(--verde);
+  padding: 4px 14px;
+  border-radius: 999px;
+  font: 12px var(--tec);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pricing-hero { text-align: center; max-width: 900px; margin: 0 auto 40px; }
+.pricing-hero h2 { margin-top: 10px; }
+
+.toggle-billing {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--superficie-2);
+  border: 1px solid var(--linha);
+  padding: 10px 22px;
+  border-radius: 999px;
+  margin-top: 16px;
+}
+.toggle-switch {
+  position: relative;
+  width: 54px;
+  height: 28px;
+  background: var(--linha);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.toggle-switch.active { background: var(--rosa); }
+.toggle-handle {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+.toggle-switch.active .toggle-handle { transform: translateX(26px); }
+
+.price-output-box {
+  background: linear-gradient(180deg, var(--superficie-2) 0%, var(--superficie) 100%);
+  border: 2px solid var(--rosa);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.price-val { font: 700 42px var(--titulos); color: var(--rosa); margin: 8px 0; }
+.price-val small { font: 15px var(--corpo); color: var(--suave); font-weight: 400; }
+
+.faq-item {
+  background: var(--superficie-2);
+  border: 1px solid var(--linha);
+  border-radius: 12px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+.faq-item:hover { border-color: var(--rosa); }
+.faq-question {
+  width: 100%;
+  text-align: left;
+  padding: 18px 24px;
+  font: 600 16px var(--corpo);
+  color: var(--texto);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.faq-answer {
+  padding: 0 24px 20px;
+  font-size: 14.5px;
+  color: var(--suave);
+  line-height: 1.6;
+  display: none;
+  border-top: 1px solid rgba(42,61,54,0.5);
+  padding-top: 16px;
+}
+.faq-item.open .faq-answer { display: block; }
+.faq-item.open .faq-icon { transform: rotate(180deg); color: var(--rosa); }
+.faq-icon { transition: transform 0.3s ease; color: var(--suave); }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-card {
+  background: var(--superficie);
+  border: 1px solid var(--rosa);
+  border-radius: 18px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 30px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.25s ease;
+}
+.modal-overlay.active .modal-card { transform: translateY(0); }
+.modal-close {
+  position: sticky;
+  float: right;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--superficie-2);
+  border: 1px solid var(--linha);
+  color: var(--suave);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.modal-close:hover { color: var(--texto); border-color: var(--rosa); }
+
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 120;
+  background: var(--superficie);
+  color: var(--texto);
+  border: 1px solid var(--rosa);
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transform: translateY(-60px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+footer {
+  border-top: 1px solid var(--linha);
+  padding: 40px 0;
+  color: var(--suave);
+  font-size: 14px;
+  background: var(--rodape-bg);
+  width: 100%;
+}
+
+.fluxo-passos {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  width: 100%;
+}
+.fluxo-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--superficie-2);
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  padding: 12px 16px;
+  flex: 1 1 180px;
+}
+.fluxo-card i {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.fluxo-card strong {
+  display: block;
+  font-size: 13.5px;
+  line-height: 1.2;
+}
+.fluxo-card span {
+  display: block;
+  font-size: 11.5px;
+  color: var(--suave);
+}
+.fluxo-seta {
+  color: var(--suave);
+  font-size: 12px;
+}
+.func-feature-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--superficie-2);
+  border: 1px solid var(--linha);
+  border-radius: 10px;
+  padding: 16px;
+  transition: border-color 0.2s ease;
+}
+.func-feature-card:hover {
+  border-color: var(--rosa);
+}
+.func-feature-card i {
+  font-size: 1.3rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.func-feature-card strong {
+  display: block;
+  font-size: 14px;
+  color: var(--texto);
+}
+.func-feature-card span {
+  display: block;
+  font-size: 12px;
+  color: var(--suave);
+  margin-top: 2px;
+}
+@media (max-width: 768px) {
+  .fluxo-seta { display: none; }
+}
+
+/* Trava de rolagem quando modais estiverem abertos */
+body.modal-open {
+  overflow: hidden !important;
+  position: fixed;
+  width: 100%;
+  touch-action: none;
+}
+
+/* ==========================================================================
+   1. CORREÇÕES DE NAVEGAÇÃO E TOUCH TARGETS (iOS & ANDROID)
+   ========================================================================== */
+
+/* Previne zoom automático em inputs no iOS */
+@media (max-width: 768px) {
+  input[type=text], 
+  input[type=email], 
+  input[type=tel], 
+  input[type=number], 
+  select, 
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Área Segura do Topo (Notch e Dynamic Island) */
+.top {
+  padding-top: constant(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Área Segura da Barra Inferior Mobile */
+@media (max-width: 992px) {
+  body {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .bottom {
+    padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
+  }
+  
+  .bottom a {
+    min-height: 44px; /* Alvo de toque mínimo WCAG */
+  }
+}
+
+/* Previne problemas de trava de rolagem nos modais no iOS */
+body.modal-open {
+  overflow: hidden !important;
+  position: fixed;
+  width: 100%;
+  touch-action: none;
+}
+
+/* ==========================================================================
+   2. REGRAS RESPONSIVAS PARA SMARTPHONES (Até 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .wrap {
+    padding: 0 16px !important;
+  }
+
+  /* Elimina estouro de largura na grade principal */
+  .hero, .grid, .painel {
+    grid-template-columns: repeat(auto-fit, minmax(100%, 1fr)) !important;
+    gap: 16px !important;
+  }
+
+  /* Ajuste das fotos dos criadores para telas menores */
+  .foto-pig {
+    height: 240px !important;
+  }
+
+  /* Ajuste no carrossel para não tapar os botões */
+  .carousel-container {
+    height: 360px !important;
+  }
+
+  .carousel-overlay {
+    padding: 20px !important;
+    background: linear-gradient(180deg, rgba(13, 21, 19, 0.3) 0%, rgba(13, 21, 19, 0.95) 85%) !important;
+  }
+
+  .carousel-btn {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* ==========================================================================
+   3. AJUSTES PARA TELAS PEQUENAS E ESTREITAS (Até 600px e 360px)
+   ========================================================================== */
+@media (max-width: 600px) {
+  /* Sobrescreve especificidades em linha do HTML */
+  div[style*="grid-template-columns: repeat(4, 1fr)"],
+  div[style*="grid-template-columns:repeat(4, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  #form-calculadora-m .grid,
+  #modal-trial .grid,
+  #modal-enterprise .grid,
+  .modal-card .grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .modal-card {
+    padding: 20px 16px !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+  }
+
+  .chartbox {
+    height: 190px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .wrap {
+    padding: 0 10px !important;
+  }
+
+  h1 { font-size: 22px !important; }
+  h2 { font-size: 18px !important; }
+
+  div[style*="grid-template-columns: repeat(4, 1fr)"] {
+    grid-template-columns: 1fr !important; /* Empilha botões em telas extra pequenas */
+  }
+}
+
+/* ==========================================================================
+   CONVIVÊNCIA ENTRE O SVG DE FUNDO E O CONTEÚDO (DESFOQUE & LEGIBILIDADE)
+   ========================================================================== */
+
+/* Fundo da tela: mantém o SVG nítido em áreas livres e com opacidade equilibrada */
+body {
+  background-image: linear-gradient(var(--bg-overlay), var(--bg-overlay)), url('SUINOTECH_2.svg') !important;
+  background-attachment: fixed !important;
+  background-position: center center !important;
+  background-size: 1800px auto !important;
+}
+
+[data-theme="light"] .text-white {
+  color: var(--texto-destaque) !important;
+}
+
+/* Aplica a cor do tema globalmente, sem o !important para permitir exceções */
+h1, h2, h3, h4,
+.step-card h3,
+.card h3,
+.modal-card h3,
+.w h3 {
+  color: var(--texto-destaque);
+}
+
+/* Trava os textos do carrossel em branco, pois a máscara de fundo é sempre escura */
+.carousel-overlay h1, 
+.carousel-overlay h2, 
+.carousel-overlay p {
+  color: #ffffff !important;
+}
+
+/* Exceções de texto para manter a ação semântica rosa e verde */
+.text-rosa, .badge-rosa, .logo, .price-val {
+  color: var(--rosa) !important;
+}
+.text-verde, .badge-verde {
+  color: var(--verde) !important;
+}
+
+/* Correção de área de toque de botões do carrossel no mobile (WCAG 44x44px) */
+@media (max-width: 768px) {
+  .carousel-btn {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* Suporte a preferência de redução de movimento */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 1. Fundo do cabeçalho dinâmico (Modo Claro e Escuro) */
+header.top {
+  background-color: var(--topo-bg) !important;
+  border-bottom: 1px solid var(--linha) !important;
+}
+
+/* 2. Cor dos links do menu superior */
+nav#nav a {
+  color: var(--texto) !important;
+}
+
+/* 3. Aba ativa (.on) e hover no menu */
+nav#nav a:hover,
+nav#nav a.on {
+  background-color: var(--rosa) !important;
+  color: #ffffff !important;
+  border-color: var(--rosa) !important;
+}
+
+/* 4. Legibilidade da pílula de status e recuo das setas no carrossel */
+.carousel-overlay .status {
+  color: var(--texto) !important;
+}
+
+.carousel-overlay {
+  padding-left: 76px !important;
+  padding-right: 76px !important;
+}
+
+.carousel-overlay .badge-rosa {
+  background: rgba(13, 21, 19, 0.85) !important;
+  color: #ff4d8d !important;
+  border-color: #ff4d8d !important;
+}
+
+.carousel-overlay .badge-verde {
+  background: rgba(13, 21, 19, 0.85) !important;
+  color: #3fa37c !important;
+  border-color: #3fa37c !important;
+}
+
+</style>
+</head>
+<body>
+
+<!-- TOAST NOTIFICATION -->
+<div id="toast" class="toast" role="alert">
+  <i class="fa-solid fa-circle-check text-rosa text-xl"></i>
+  <div>
+    <p id="toast-message" class="font-semibold text-sm" style="margin:0"></p>
+  </div>
+</div>
+
+<!-- TOPO DA PÁGINA (HEADER) -->
+<header class="top">
+  <div class="wrap bar">
+    <a class="logo" href="#inicio">
+      <img src="SUINOTECH.svg" alt="SuinoTech" width="34" height="34">
+      SuinoTech
+    </a>
+     
+    <nav id="nav" aria-label="Navegação Principal (7 Páginas)">
+      <a href="#inicio"> Início</a>
+      <a href="#quem-somos"> Quem Somos</a>
+      <a href="#mercado"> Mercado</a>
+      <a href="#como-funciona"> Como Funciona</a>
+      <a href="#funcionalidades"> Funcionalidades</a>
+      <a href="#planos"> Planos</a>
+      <a href="#contato"> Contato</a>
+    </nav>
+
+    <!-- CARD/BOTÃO DE ALTERNÂNCIA DE TEMA (REPOSICIONADO À DIREITA) -->
+    <button type="button" id="theme-toggle" class="theme-toggle-btn" aria-label="Alternar tema claro e escuro">
+      <i class="fa-solid fa-moon text-rosa"></i>
+      <span class="theme-label">Escuro</span>
+    </button>
+
+    <button class="menu-btn" id="mbtn" aria-expanded="false" aria-controls="nav">Menu</button>
+  </div>
+</header>
+
+<!-- BARRA INFERIOR (Mobile) -->
+<nav class="bottom" aria-label="Navegação inferior móvel">
+  <a href="#inicio"><i class="fa-solid fa-house"></i>Início</a>
+  <a href="#funcionalidades"><i class="fa-solid fa-list-check"></i>Recursos</a>
+  <a href="#planos"><i class="fa-solid fa-tags"></i>Planos</a>
+  <a href="#contato"><i class="fa-solid fa-envelope"></i>Contato</a>
+</nav>
+
+<main class="wrap">
+
+<!-- ==========================================================================
+     PÁGINA 1: INÍCIO (HERO BANNER 100% PORCOS E GRANJAS & PAINEL DEMONSTRATIVO)
+     ========================================================================== -->
+<section class="page on" id="inicio">
+  
+  <div class="carousel-container" id="hero-carousel">
+  
+  <!-- SLIDE 1 -->
+  <div class="carousel-slide active" style="background-image: url('https://plus.unsplash.com/premium_photo-1661914806958-716d7b029d20?w=1600&auto=format&fit=crop&q=80');">
+    <div class="carousel-overlay">
+      <p class="status"><span></span>Plataforma Especializada em Suinocultura</p>
+      <h1 style="font-size: clamp(26px, 4vw, 42px); margin-bottom: 12px; color: #ffffff;">
+        Gestão financeira e estratégica completa para sua granja de suínos
+      </h1>
+      <p style="font-size: 15px; color: var(--suave); margin-bottom: 24px;">
+        Com painéis visuais intuitivos e simulador em tempo real, a SuinoTech transforma seus dados de manejo em margem financeira exata por animal alojado!
+      </p>
+      <div>
+        <a class="btn" href="#painel"><i class="fa-solid fa-chart-line"></i> Ver painel</a>
+        <a class="btn sec" href="#demo"><i class="fa-solid fa-circle-play"></i> Demonstrativo</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 -->
+  <div class="carousel-slide" style="background-image: url('https://plus.unsplash.com/premium_photo-1661964177355-d2554306923e?w=1600&auto=format&fit=crop&q=80');">
+    <div class="carousel-overlay">
+      <span class="badge-verde" style="margin-bottom: 12px; display: inline-flex;"><i class="fa-solid fa-piggy-bank"></i> Lucro Real por Cabeça</span>
+      <h2 style="font-size: clamp(26px, 4vw, 42px); margin-bottom: 12px; color: #ffffff;">
+  Lucro real por animal, lote a lote
+</h2>
+
+      <p style="font-size: 15px; color: var(--suave); margin-bottom: 24px;">
+        A SuinoTech elimina o achismo nas granjas de suínos. Cada desvio de conversão alimentar ou mortalidade é convertido em valor financeiro claro.
+      </p>
+      <div>
+        <a class="btn" href="#planos"><i class="fa-solid fa-tags"></i> Ver Planos</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 -->
+  <div class="carousel-slide" style="background-image: url('https://plus.unsplash.com/premium_photo-1661963608851-e4d034fcecb4?w=1600&auto=format&fit=crop&q=80');">
+    <div class="carousel-overlay">
+      <span class="badge-rosa" style="margin-bottom: 12px; display: inline-flex;"><i class="fa-solid fa-mobile-screen"></i> Galpão &amp; Campo</span>
+      <h1 style="font-size: clamp(26px, 4vw, 42px); margin-bottom: 12px; color: #ffffff;">
+        Acompanhamento diário no celular e no computador
+      </h1>
+      <p style="font-size: 15px; color: var(--suave); margin-bottom: 24px;">
+        Registre pesagens, ração, coberturas e sanidade diretamente no galpão de suínos com aplicativo sincronizado.
+      </p>
+      <div>
+        <a class="btn" href="#como-funciona"><i class="fa-solid fa-gears"></i> Como funciona</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 -->
+  <div class="carousel-slide" style="background-image: url('https://plus.unsplash.com/premium_photo-1663047663292-3ccb2889fb11?w=1600&auto=format&fit=crop&q=80');">
+    <div class="carousel-overlay">
+      <span class="badge-verde" style="margin-bottom: 12px; display: inline-flex;"><i class="fa-solid fa-warehouse"></i> Infraestrutura e Nutrição</span>
+      <h1 style="font-size: clamp(26px, 4vw, 42px); margin-bottom: 12px; color: #ffffff;">
+        Controle total de comedouros, fábrica e insumos
+      </h1>
+      <p style="font-size: 15px; color: var(--suave); margin-bottom: 24px;">
+        Monitore estoques de milho, farelo de soja, núcleos e insumos veterinários para garantir a eficiência máxima em cada fase.
+      </p>
+      <div>
+        <a class="btn" href="#funcionalidades"><i class="fa-solid fa-boxes-stacked"></i> Módulos do Sistema</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5 -->
+  <div class="carousel-slide" style="background-image: url('https://plus.unsplash.com/premium_photo-1661900456508-8fb0acce71b8?w=1600&auto=format&fit=crop&q=80');">
+    <div class="carousel-overlay">
+      <span class="badge-rosa" style="margin-bottom: 12px; display: inline-flex;"><i class="fa-solid fa-chart-pie"></i> Análise Zootécnica</span>
+      <h1 style="font-size: clamp(26px, 4vw, 42px); margin-bottom: 12px; color: #ffffff;">
+        Precisão no acompanhamento do lote
+      </h1>
+      <p style="font-size: 15px; color: var(--suave); margin-bottom: 24px;">
+        Acompanhe métricas em tempo real para otimizar o ganho médio diário e a eficiência alimentar dos animais.
+      </p>
+      <div>
+        <a class="btn" href="#painel"><i class="fa-solid fa-chart-line"></i> Ver Indicadores</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6 -->
+  <div class="carousel-slide" style="background-image: url('https://plus.unsplash.com/premium_photo-1663045932351-267ae867e880?w=1600&auto=format&fit=crop&q=80');">
+    <div class="carousel-overlay">
+      <span class="badge-verde" style="margin-bottom: 12px; display: inline-flex;"><i class="fa-solid fa-shield-halved"></i> Biossegurança & Sanidade</span>
+      <h1 style="font-size: clamp(26px, 4vw, 42px); margin-bottom: 12px; color: #ffffff;">
+        Controle sanitário e preventivo do plantel
+      </h1>
+      <p style="font-size: 15px; color: var(--suave); margin-bottom: 24px;">
+        Acompanhe calendários de vacinação e tratamentos para garantir a saúde total da sua granja.
+      </p>
+      <div>
+        <a class="btn" href="#funcionalidades"><i class="fa-solid fa-list-check"></i> Ver Recursos</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7 -->
+  <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1759406594907-376f308e7673?w=1600&auto=format&fit=crop&q=80');">
+    <div class="carousel-overlay">
+      <span class="badge-rosa" style="margin-bottom: 12px; display: inline-flex;"><i class="fa-solid fa-building-user"></i> Para Integradoras e Produtores</span>
+      <h1 style="font-size: clamp(26px, 4vw, 42px); margin-bottom: 12px; color: #ffffff;">
+        Soluções sob medida para o seu negócio
+      </h1>
+      <p style="font-size: 15px; color: var(--suave); margin-bottom: 24px;">
+        Modelos flexíveis para produtores independentes e grandes cooperativas agroindustriais.
+      </p>
+      <div>
+        <a class="btn" href="#perfis-pag"><i class="fa-solid fa-users"></i> Perfis de Atendimento</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8 -->
+  <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1548781861-57110507372c?w=1600&auto=format&fit=crop&q=80');">
+    <div class="carousel-overlay">
+      <span class="badge-verde" style="margin-bottom: 12px; display: inline-flex;"><i class="fa-solid fa-seedling"></i> Sustentabilidade &amp; Resultados</span>
+      <h1 style="font-size: clamp(26px, 4vw, 42px); margin-bottom: 12px; color: #ffffff;">
+        Decisões inteligentes baseadas em dados
+      </h1>
+      <p style="font-size: 15px; color: var(--suave); margin-bottom: 24px;">
+        Transforme o histórico da sua propriedade em estratégias para maximizar a rentabilidade safra após safra.
+      </p>
+      <div>
+        <a class="btn" href="#contato"><i class="fa-solid fa-envelope"></i> Fale Conosco</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTÕES DE NAVEGAÇÃO -->
+  <button class="carousel-btn prev" id="slide-prev" aria-label="Slide anterior"><i class="fa-solid fa-chevron-left"></i></button>
+  <button class="carousel-btn next" id="slide-next" aria-label="Próximo slide"><i class="fa-solid fa-chevron-right"></i></button>
+
+  <!-- 8 INDICADORES (BOLINHAS) -->
+  <div class="carousel-indicators" id="slide-dots">
+    <button class="carousel-dot active" data-index="0" aria-label="Slide 1"></button>
+    <button class="carousel-dot" data-index="1" aria-label="Slide 2"></button>
+    <button class="carousel-dot" data-index="2" aria-label="Slide 3"></button>
+    <button class="carousel-dot" data-index="3" aria-label="Slide 4"></button>
+    <button class="carousel-dot" data-index="4" aria-label="Slide 5"></button>
+    <button class="carousel-dot" data-index="5" aria-label="Slide 6"></button>
+    <button class="carousel-dot" data-index="6" aria-label="Slide 7"></button>
+    <button class="carousel-dot" data-index="7" aria-label="Slide 8"></button>
+  </div>
+
+</div>
+
+  <div style="margin-bottom: 48px;">
+    <h2>Quatro problemas que escondem o lucro da granja de suínos</h2>
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;">
+      <div class="card">
+        <h3 style="color: #ffffff; margin-bottom: 10px;"><i class="fa-solid fa-piggy-bank text-rosa mr-2"></i>Lucro real e custos ocultos</h3>
+        <p style="color: var(--suave); font-size: 14px; margin: 0; line-height: 1.55;">
+          Ração consumida a mais, perdas de mortalidade e dias extras de alojamento se acumulam. Na SuinoTech, cada desvio vira reais por animal.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3 style="color: #ffffff; margin-bottom: 10px;"><i class="fa-solid fa-wheat-awn text-verde mr-2"></i>Desperdício de ração</h3>
+        <p style="color: var(--suave); font-size: 14px; margin: 0; line-height: 1.55;">
+          Mede com precisão a conversão alimentar (kg de ração por kg ganho) e identifica desregulagens de comedouros antes do fim do lote.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3 style="color: #ffffff; margin-bottom: 10px;"><i class="fa-solid fa-bell text-amber mr-2"></i>Demora para identificar falhas</h3>
+        <p style="color: var(--suave); font-size: 14px; margin: 0; line-height: 1.55;">
+          Alertas automáticos avisam desvios de temperatura, consumo e sanidade durante o lote, permitindo correção imediata no galpão.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3 style="color: #ffffff; margin-bottom: 10px;"><i class="fa-solid fa-chart-line text-rosa mr-2"></i>Decisões sem histórico</h3>
+        <p style="color: var(--suave); font-size: 14px; margin: 0; line-height: 1.55;">
+          Guarda o histórico auditável de cada lote para comparar genética, nutrição e planejar as próximas compras com segurança.
+        </p>
+      </div>
+    </div>
+  </div>
+
+<button type="button" id="btn-sync-status" class="status" style="cursor: pointer; background: var(--superficie-2); border: 1px solid var(--verde); font-family: var(--corpo); margin-bottom: 12px;">
+  <span style="background: var(--verde);"></span>
+  <strong style="color: var(--verde);">🟢 Nuvem Sincronizada</strong> (Clique para forçar sync)
+</button>
+
+  <div id="painel" style="scroll-margin-top: 100px; margin-top: 48px;">
+
+<!-- ==========================================================================
+         INSERIR O CÓDIGO 4 AQUI (BANNER DE RESSALVA ACADÉMICA)
+         ========================================================================== -->
+    <div class="note-academic-banner" style="background: var(--superficie-2); border: 1px solid var(--linha); border-left: 4px solid var(--amber); border-radius: 8px; padding: 10px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--texto);">
+      <i class="fa-solid fa-graduation-cap text-amber" style="font-size: 18px;"></i>
+      <div>
+        <strong>Projeto Acadêmico FEMA:</strong> Os valores de cotações, simuladores e planos apresentados neste site são exclusivamente ilustrativos para fins de estudo e prototipagem de software.
+      </div>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+      <span class="badge-rosa" style="padding: 6px 16px; font-size: 13px; margin-bottom: 8px; display: inline-flex;">
+        <i class="fa-solid fa-chart-line mr-1.5"></i> Simulação em Tempo Real
+      </span>
+      <h2 style="margin: 6px 0 4px; font-family: var(--corpo); font-weight: 600;">Painel Demonstrativo da Granja</h2>
+      <p class="note" style="margin: 0; font-family: var(--corpo); font-size: 14.5px; color: var(--suave);">
+        Selecione um lote de suínos para visualizar os gráficos zootécnicos, alertas operacionais e o resultado financeiro por cabeça alojada.
+      </p>
+    </div>
+
+    <div class="seletor" id="seletor" role="group" aria-label="Selecionar lote de porcos" style="margin: 16px 0 24px 0;"></div>
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 28px;">
+      <div class="card" style="padding: 20px; border-left: 4px solid var(--rosa); background: var(--superficie-2);">
+        <div style="display: flex; justify-content: space-between; align-items: center; color: var(--suave); font-size: 13.5px;">
+          <span>Resultado / Cabeça</span>
+          <i class="fa-solid fa-sack-dollar text-rosa text-lg"></i>
+        </div>
+        <div style="font: 700 26px var(--titulos); color: var(--rosa); margin-top: 6px;" id="kpi-animal-val">R$ 352.00</div>
+        <span class="note" style="font-size: 11.5px; color: var(--verde);"><i class="fa-solid fa-arrow-up mr-1"></i>Margem Positiva</span>
+      </div>
+
+      <div class="card" style="padding: 20px; border-left: 4px solid var(--verde); background: var(--superficie-2);">
+        <div style="display: flex; justify-content: space-between; align-items: center; color: var(--suave); font-size: 13.5px;">
+          <span>Conversão Alimentar</span>
+          <i class="fa-solid fa-wheat-awn text-verde text-lg"></i>
+        </div>
+        <div style="font: 700 26px var(--titulos); color: var(--texto-destaque); margin-top: 6px;" id="kpi-racao-val">2.38 <small style="font-size: 13px; color: var(--suave);">kg/kg</small></div>
+        <span class="note" style="font-size: 11.5px; color: var(--suave);" id="kpi-racao-status">Meta: ≤ 2.45 kg/kg</span>
+      </div>
+
+      <div class="card" style="padding: 20px; border-left: 4px solid #3b82f6; background: var(--superficie-2);">
+        <div style="display: flex; justify-content: space-between; align-items: center; color: var(--suave); font-size: 13.5px;">
+          <span>Custo Ração</span>
+          <i class="fa-solid fa-coins text-lg" style="color: #3b82f6;"></i>
+        </div>
+        <div style="font: 700 26px var(--titulos); color: var(--texto-destaque); margin-top: 6px;" id="kpi-custo-val">R$ 390.00</div>
+        <span class="note" style="font-size: 11.5px; color: var(--suave);">Por cabeça alojada</span>
+      </div>
+
+      <div class="card" style="padding: 20px; border-left: 4px solid var(--amber); background: var(--superficie-2);">
+        <div style="display: flex; justify-content: space-between; align-items: center; color: var(--suave); font-size: 13.5px;">
+          <span>Custos Operacionais</span>
+          <i class="fa-solid fa-gears text-amber text-lg"></i>
+        </div>
+        <div style="font: 700 26px var(--titulos); color: var(--texto-destaque); margin-top: 6px;" id="kpi-custos-val">R$ 40.00</div>
+        <span class="note" style="font-size: 11.5px; color: var(--suave);" id="kpi-custos-detalhe">San.: R$ 22,00 | Água: R$ 8,00 | Energ.: R$ 10,00</span>
+      </div>
+    </div>
+
+    <!-- GRADE DE CARDS E GRÁFICOS DO PAINEL -->
+    <div class="painel">
+
+      <!-- 1. GRÁFICO CONVERSÃO ALIMENTAR -->
+      <div class="w" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <h3 style="margin:0; font-size: 18px;"><i class="fa-solid fa-chart-column text-verde mr-2"></i>Ração &amp; Conversão</h3>
+            <span class="badge-verde" style="font-size: 10px;">Eficiência</span>
+          </div>
+          <p class="note" style="margin-bottom: 14px;">Comparativo de consumo no lote de suínos (kg ração / kg ganho)</p>
+        </div>
+        <div class="chartbox"><canvas id="cRacao" role="img" aria-label="Conversão alimentar por lote"></canvas></div>
+      </div>
+
+      <!-- 2. ÍNDICE SUINOTECH -->
+      <div class="w" style="text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <h3 style="margin:0 0 4px; font-size: 18px;"><i class="fa-solid fa-award text-rosa mr-2"></i>Índice SuinoTech</h3>
+          <p class="note">Pontuação algorítmica do lote de suínos (0 a 100)</p>
+        </div>
+        <div style="position: relative; width: 150px; height: 150px; margin: 12px auto;">
+          <svg width="150" height="150" viewBox="0 0 120 120" style="transform: rotate(-90deg);">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="var(--superficie-2)" stroke-width="10"></circle>
+            <circle id="gauge-ring" cx="60" cy="60" r="50" fill="none" stroke="var(--rosa)" stroke-width="10" stroke-dasharray="314.15" stroke-dashoffset="37.6" stroke-linecap="round" style="transition: stroke-dashoffset 0.8s ease, stroke 0.4s ease;"></circle>
+          </svg>
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <span id="gauge-val" style="font-size: 38px; font-weight: 700; color: var(--rosa); line-height: 1;">88</span>
+            <span style="font-size: 11px; color: var(--suave); font-weight: 600; margin-top: 2px;">PONTOS</span>
+          </div>
+        </div>
+        <div>
+          <div id="leitura" style="font-weight: 600; font-size: 14.5px; margin-bottom: 4px; color: var(--verde);">Desempenho Excelente</div>
+          <p class="note" style="margin:0; font-size: 11.5px;">Avaliado com base em 5 fatores zootécnicos do lote</p>
+        </div>
+      </div>
+
+      <!-- 3. GRÁFICO COMPOSIÇÃO DE CUSTOS -->
+      <div class="w" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <h3 style="margin:0; font-size: 18px;"><i class="fa-solid fa-chart-pie text-rosa mr-2"></i>Composição / Cabeça</h3>
+            <span class="badge-rosa" style="font-size: 10px;">Financeiro</span>
+          </div>
+          <p class="note" style="margin-bottom: 14px;">Despesas no galpão vs Margem estimada por porco (R$)</p>
+        </div>
+        <div class="chartbox"><canvas id="cAnimal" role="img" aria-label="Valores por animal"></canvas></div>
+      </div>
+
+      <!-- 4. GRÁFICO CURVA DE GPD (ZOOTECNIA) -->
+      <div class="w" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <h3 style="margin:0; font-size: 18px;"><i class="fa-solid fa-chart-line text-verde mr-2"></i> Curva de GPD (g/dia)</h3>
+            <span class="badge-verde" style="font-size: 10px;">Zootecnia</span>
+          </div>
+          <p class="note" style="margin-bottom: 14px;">Evolução do Ganho Médio Diário vs Linhagem (g/dia)</p>
+        </div>
+        <div class="chartbox"><canvas id="cGpd" role="img" aria-label="Curva de ganho médio diário por semana"></canvas></div>
+      </div>
+
+      <!-- 5. ALERTAS ZOOTÉCNICOS -->
+      <div class="w" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <h3 style="margin:0; font-size: 18px;"><i class="fa-solid fa-bell text-amber mr-2"></i>Alertas Zootécnicos</h3>
+            <span class="note" style="font-size: 11px; color: var(--rosa);"><i class="fa-solid fa-pointer mr-1"></i>Clique p/ detalhes</span>
+          </div>
+          <p class="note" style="margin-bottom: 14px;">Notificações automáticas do lote de porcos</p>
+        </div>
+        <ul class="alertas" id="alertas" style="margin-bottom: 10px;"></ul>
+        <div style="background: var(--superficie-2); padding: 10px 14px; border-radius: 8px; font-size: 11.5px; color: var(--suave); border: 1px solid var(--linha);">
+          <i class="fa-solid fa-shield-halved text-verde mr-1"></i> Auditoria de parâmetros sanitários ativa
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DEMONSTRATIVO DO RESULTADO DO EXERCÍCIO (DRE) FORA DA GRADE E ISOLADO -->
+    <details class="card" style="margin-top: 24px;">
+      <summary style="cursor:pointer; font-weight:600; font-size: 1.05rem;">
+        <i class="fa-solid fa-file-invoice-dollar text-verde mr-2"></i> Demonstrativo do Resultado do Exercício (DRE Simplificado do Lote)
+      </summary>
+      <div class="tabela" style="margin-top: 16px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Estrutura da DRE (por Lote / Cabeça)</th>
+              <th style="text-align: right;">Valor por Cabeça (R$)</th>
+              <th style="text-align: right;">Total do Lote (1.000 cab.)</th>
+            </tr>
+          </thead>
+          <tbody>
+  <tr>
+    <td><strong>Receita Bruta de Vendas (Suíno Vivo - 115kg)</strong></td>
+    <td style="text-align: right; color: var(--verde);" id="dre-receita-cab">R$ 782,00</td>
+    <td style="text-align: right; color: var(--verde);" id="dre-receita-tot">R$ 782.000,00</td>
+  </tr>
+  <tr>
+    <td>(-) Impostos & Deduções (ICMS/FUNRURAL est. 2,5%)</td>
+    <td style="text-align: right; color: var(--rosa);" id="dre-imposto-cab">- R$ 19,55</td>
+    <td style="text-align: right; color: var(--rosa);" id="dre-imposto-tot">- R$ 19.550,00</td>
+  </tr>
+  <tr style="font-weight: 600; background: var(--superficie-2);">
+    <td>(=) Receita Líquida Operacional</td>
+    <td style="text-align: right;" id="dre-rec-liq-cab">R$ 762,45</td>
+    <td style="text-align: right;" id="dre-rec-liq-tot">R$ 762.450,00</td>
+  </tr>
+  <tr>
+    <td>(-) Custo dos Produtos Vendidos - CPV (Ração)</td>
+    <td style="text-align: right; color: var(--rosa);" id="dre-cpv-cab">- R$ 390,00</td>
+    <td style="text-align: right; color: var(--rosa);" id="dre-cpv-tot">- R$ 390.000,00</td>
+  </tr>
+  <tr>
+    <td>(-) Custos Operacionais Galpão (Sanidade, Água, Energia)</td>
+    <td style="text-align: right; color: var(--rosa);" id="dre-oper-cab">- R$ 40,00</td>
+    <td style="text-align: right; color: var(--rosa);" id="dre-oper-tot">- R$ 40.000,00</td>
+  </tr>
+  <tr style="font-weight: 700; background: var(--superficie-2);">
+    <td style="color: var(--verde);">(=) Lucro Bruto / Margem Operacional do Lote</td>
+    <td style="text-align: right; color: var(--verde); font-size: 16px;" id="dre-lucro-cab">R$ 332,45</td>
+    <td style="text-align: right; color: var(--verde); font-size: 16px;" id="dre-lucro-tot">R$ 332.450,00</td>
+  </tr>
+</tbody>
+        </table>
+      </div>
+    </details>
+
+  <details class="card" style="margin-top: 24px;">
+
+    <summary style="cursor:pointer; font-weight:600; font-size: 1.1rem;">
+        <i class="fa-solid fa-sliders text-rosa mr-2"></i>
+        Simulador de Dados Próprios da Granja &amp; Guia de Indicadores
+    </summary>
+  
+  <div style="margin-top: 24px;">
+    
+    <!-- PARTE SUPERIOR: SIMULADOR (ESQUERDA) VS GUIA DE INDICADORES (DIREITA) EM 50/50 -->
+    <div style="display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: stretch;">
+      
+      <!-- COLUNA ESQUERDA: CAMPOS DO FORMULÁRIO -->
+      <div style="background: var(--superficie-2); border: 1px solid var(--linha); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between;">
+        <form id="ed">
+          <p class="note" style="margin-bottom: 18px; font-size: 13.5px;">
+            Altere os parâmetros do lote e acompanhe o recálculo instantâneo dos gráficos e do Índice SuinoTech.
+          </p>
+          
+          <div id="ed-campos"></div>
+          
+          <div style="margin-top: 22px; display: flex; flex-wrap: wrap; gap: 12px;">
+            <button class="btn" type="submit" id="btn-aplicar" style="flex: 1; margin: 0;"><i class="fa-solid fa-check"></i> Aplicar ao Lote</button>
+            <button class="btn sec" type="button" id="ed-reset" style="flex: 1; margin: 0;"><i class="fa-solid fa-rotate-left"></i> Restaurar Exemplo</button>
+          </div>
+          <p id="ed-msg" class="note" role="status" aria-live="polite" style="margin-top: 12px; font-weight: 600;"></p>
+        </form>
+      </div>
+
+      <!-- COLUNA DIREITA: GUIA INTERATIVO (INFO-BOX) -->
+      <div id="info-box" style="background: var(--superficie-2); border: 1px solid var(--linha); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 12px; color: var(--rosa); margin-bottom: 14px;">
+            <div style="width: 42px; height: 42px; border-radius: 12px; background: var(--rosa-bg); border: 1px solid var(--rosa); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <i class="fa-solid fa-circle-info text-xl" id="info-icon"></i>
+            </div>
+            <div>
+              <h3 style="margin:0; font-size: 18px;" id="info-title">Guia Interativo dos Indicadores</h3>
+              <span class="note" style="font-size: 11.5px;">Passe o mouse nos campos para explorar</span>
+            </div>
+          </div>
+          
+          <p style="font-size: 14px; color: var(--suave); margin-bottom: 16px; line-height: 1.55;" id="info-desc">
+            Passe o mouse ou toque em qualquer campo do simulador para entender o cálculo, o impacto zootécnico e o valor financeiro do indicador na suinocultura.
+          </p>
+        </div>
+
+        <div id="info-details" style="font-size: 13px; background: var(--superficie); padding: 16px; border-radius: 10px; border: 1px solid var(--linha); color: var(--texto);">
+          <p style="margin: 0;"><i class="fa-solid fa-lightbulb text-amber mr-1.5"></i> <strong>Dica SuinoTech:</strong> Reduzir a conversão alimentar dos porcos em 0,10 representa economizar até 2,5 toneladas de ração por ciclo de alojamento em um lote de 1.000 suínos.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PARTE INFERIOR: PROCESSAMENTO EM TEMPO REAL E RECURSOS (LARGURA TOTAL) -->
+    <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--linha);">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+        <h4 style="font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--suave); margin: 0;">
+          <i class="fa-solid fa-microchip text-rosa mr-1"></i> Processamento em Tempo Real na Granja:
+        </h4>
+        <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--verde);">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--verde); display: inline-block; box-shadow: 0 0 6px var(--verde);"></span>
+          <span>Sincronização offline/online ativa</span>
+        </div>
+      </div>
+
+      <!-- FLUXO DE PASSSOS EM LINHA CONTINUA -->
+      <div class="fluxo-passos" style="margin-bottom: 20px;">
+        <div class="fluxo-card">
+          <i class="fa-solid fa-pen-to-square text-rosa"></i>
+          <div>
+            <strong class="text-rosa">1. Edição</strong>
+            <span>Parâmetros</span>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right fluxo-seta"></i>
+        <div class="fluxo-card">
+          <i class="fa-solid fa-calculator text-rosa"></i>
+          <div>
+            <strong class="text-rosa">2. Simulação</strong>
+            <span>Recálculo</span>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right fluxo-seta"></i>
+        <div class="fluxo-card">
+          <i class="fa-solid fa-chart-line text-rosa"></i>
+          <div>
+            <strong class="text-rosa">3. Gráficos</strong>
+            <span>Renderização</span>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right fluxo-seta"></i>
+        <div class="fluxo-card">
+          <i class="fa-solid fa-database text-rosa"></i>
+          <div>
+            <strong class="text-rosa">4. Memória</strong>
+            <span>Browser Local</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- OS 3 CARDS DE RECURSOS EM GRID EQUILIBRADO -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
+  <!-- Botão de Exportação PDF -->
+  <button type="button" class="func-feature-card" id="btn-export-pdf" style="text-align: left; cursor: pointer; width: 100%; font-family: inherit;">
+    <i class="fa-solid fa-file-pdf text-rosa"></i>
+    <div>
+      <strong>Exportar em PDF</strong>
+      <span>Gerar documento para impressão/salvar</span>
+    </div>
+  </button>
+
+  <!-- Botão de Exportação Excel (.CSV) -->
+  <button type="button" class="func-feature-card" id="btn-export-excel" style="text-align: left; cursor: pointer; width: 100%; font-family: inherit;">
+    <i class="fa-solid fa-file-csv text-verde"></i>
+    <div>
+      <strong>Exportar Planilha (.CSV)</strong>
+      <span>Descarregar dados do lote em Excel</span>
+    </div>
+  </button>
+
+  <!-- Card de Validação -->
+  <div class="func-feature-card">
+    <i class="fa-solid fa-shield-halved text-verde"></i>
+    <div>
+      <strong>Validação de Margem</strong>
+      <span>Alertas automáticos ativos</span>
+    </div>
+  </div>
+</div>
+
+    </div>
+
+  </div>
+</details>
+
+  </div>
+
+  <h2 id="demo" style="margin-top: 56px;">Veja a Plataforma SuinoTech em ação na granja</h2>
+  <div class="player">
+    <video id="vid" controls playsinline hidden src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"></video>
+    <div class="capa" id="capa">
+      <button class="play" id="play" data-e="play" aria-label="Reproduzir vídeo de apresentação"></button>
+      <p style="margin:0; font-weight: 600; font-size: 15px;">Vídeo de apresentação da plataforma SuinoTech · 26 s</p>
+    </div>
+  </div>
+  <p class="ctl" id="ctl" hidden style="margin-top: 12px;">
+    <button class="btn sec" type="button" id="pp">Pausar</button>
+    <button class="btn sec" type="button" id="rst">Reiniciar</button>
+  </p>
+  <p class="note" style="margin-top: 10px;">Vídeo demonstrativo: valores exibidos são dados simulados para fins de projeto acadêmico.</p>
+
+</section>
+
+<!-- ==========================================================================
+     PÁGINA 2: QUEM SOMOS (HISTÓRIA, MISSÃO, CRIADORES E GRANJAS DE SUÍNOS)
+     ========================================================================== -->
+<section class="page" id="quem-somos">
+  <!-- PRIMEIRA PARTE: INTRODUÇÃO -->
+  <div style="margin-bottom: 36px;">
+    <span class="badge-rosa" style="margin-bottom: 12px; display: inline-flex;"><i class="fa-solid fa-users"></i> História & Propósito</span>
+    <h1>Quem Somos</h1>
+    <p style="font-size: 16px;">A SuinoTech é uma plataforma de gestão financeira e estratégica desenvolvida especialmente para granjas de suínos, totalmente acessível via aplicativo no celular ou pelo computador.</p>
+    <p>Reunimos em um único ambiente digital todos os dados zootécnicos do lote de porcos (consumo por fase nutricional, ganho de peso diário - GPD, mortalidade, acompanhamento sanitário e custos operacionais) e traduzimos tudo em reais (R$) transparentes para o produtor.</p>
+  </div>
+
+  <!-- SEGUNDA PARTE: PERFIS DE ATENDIMENTO (MOVIDOS PARA CÁ) -->
+  <div id="perfis-pag" style="margin-bottom: 48px; scroll-margin-top: 100px;">
+    <span class="badge-rosa" style="margin-bottom: 10px; display: inline-flex;"><i class="fa-solid fa-building-user"></i> Modelos Adaptados</span>
+    <h2 style="margin-top: 0;">Perfis de Atendimento</h2>
+    <p>Soluções sob medida para o porte da sua granja de suínos ou modelo de integração agroindustrial.</p>
+
+    <div class="grid" style="margin-top: 28px;">
+      <div class="card destaque" style="padding: 32px;">
+        <span class="badge-rosa"><i class="fa-solid fa-tractor"></i> Self-Service</span>
+        <h3 style="margin-top:14px; font-size: 22px;">Produtor Independente</h3>
+        <p>Desenvolvido para suinocultores que gerenciam a própria propriedade (até 2.000 cabeças alojadas) e necessitam de um sistema ágil, sem burocracia e direto no celular para apurar o lucro real do lote.</p>
+        
+        <ul style="padding-left: 20px; font-size:14.5px; color: var(--suave);" class="space-y-3 mt-4">
+          <li><i class="fa-solid fa-circle-check text-verde mr-2"></i> Ativação digital imediata em 2 minutos</li>
+          <li><i class="fa-solid fa-circle-check text-verde mr-2"></i> Aplicativo móvel offline para uso nos galpões</li>
+          <li><i class="fa-solid fa-circle-check text-verde mr-2"></i> 14 dias de teste totalmente gratuito</li>
+          <li><i class="fa-solid fa-circle-check text-verde mr-2"></i> Regra transparente de excedente por bloco de 100 porcos</li>
+        </ul>
+        <p style="margin-top: 28px;">
+          <a class="btn" href="#planos"><i class="fa-solid fa-calculator"></i> Ver Preços para Produtor</a>
+        </p>
+      </div>
+
+      <div class="card destaque" style="padding: 32px;">
+        <span class="badge-verde"><i class="fa-solid fa-building-user"></i> Enterprise</span>
+        <h3 style="margin-top:14px; font-size: 22px;">Integradoras &amp; Agroindústrias</h3>
+        <p>Projetado para cooperativas e integradoras suinícolas que acompanham dezenas ou centenas de produtores parceiros. Oferece BI corporativo, padronização de dados zootécnicos e ranking de produtividade.</p>
+
+        <ul style="padding-left: 20px; font-size:14.5px; color: var(--suave);" class="space-y-3 mt-4">
+          <li><i class="fa-solid fa-circle-check text-verde mr-2"></i> Dashboard executivo consolidado de todas as granjas</li>
+          <li><i class="fa-solid fa-circle-check text-verde mr-2"></i> APIs RESTful para integração com ERPs (TOTVS, SAP, Senior)</li>
+          <li><i class="fa-solid fa-circle-check text-verde mr-2"></i> SLA de atendimento prioritário em 2 horas</li>
+          <li><i class="fa-solid fa-circle-check text-verde mr-2"></i> Treinamento técnico presencial ou remoto para extensionistas</li>
+        </ul>
+        <p style="margin-top: 28px;">
+          <a class="btn sec" href="#planos"><i class="fa-solid fa-sitemap"></i> Simular Contrato Enterprise</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TERCEIRA PARTE: PILARES INSTITUCIONAIS -->
+  <div style="margin-bottom: 48px;">
+  <h2 style="margin-top:0;">Nossos Pilares Institucionais</h2>
+  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 20px;">
+    
+    <!-- MISSÃO (Acende em Rosa) -->
+    <div class="card pilar-card pilar-rosa">
+      <h3 class="text-rosa"><i class="fa-solid fa-bullseye mr-2"></i>Missão</h3>
+      <p style="font-size: 14.5px;">Ajudar o suinocultor a enxergar, lote a lote, quanto custam as decisões de manejo no galpão, permitindo agir com embasamento técnico e financeiro.</p>
+    </div>
+
+    <!-- VISÃO (Acende em Verde) -->
+    <div class="card pilar-card pilar-verde">
+      <h3 class="text-verde"><i class="fa-solid fa-eye mr-2"></i>Visão</h3>
+      <p style="font-size: 14.5px;">Tornar a gestão financeira por animal parte da rotina padrão de todas as granjas de suínos no Brasil, promovendo sustentabilidade econômica no campo.</p>
+    </div>
+
+    <!-- VALORES (Acende em Âmbar) -->
+    <div class="card pilar-card pilar-amber">
+      <h3 class="text-amber"><i class="fa-solid fa-heart mr-2"></i>Valores</h3>
+      <p style="font-size: 14.5px;">
+        <b>Eficiência:</b> eliminar perdas sem comprometer o bem-estar animal.<br>
+        <b>Transparência:</b> demonstrar a origem de cada número.<br>
+        <b>Respeito:</b> valorizar o conhecimento do produtor rural.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+  <!-- QUARTA PARTE: NOSSOS CRIADORES -->
+  <h2>Nossos Criadores</h2>
+  <p>O projeto SuinoTech foi idealizado por quatro acadêmicos no âmbito do Projeto Integrador em Empreendedorismo da Fundação Educacional Machado de Assis (FEMA).</p>
+
+  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-top: 24px;">
+    <!-- Cards dos criadores permanecem iguais -->
+    <div class="card">
+      <img class="foto-pig" src="brunooliveira.jpg" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80';" alt="Foto de Bruno Oliveira" style="height: 380px; object-fit: cover; object-position: center 20%;">
+      <h3>Bruno Oliveira</h3>
+      <p>Criador da SuinoTech e acadêmico do 4º semestre de Ciências Contábeis na FEMA (Santa Rosa/RS).</p>
+    </div>
+    <div class="card">
+      <img class="foto-pig" src="joaochapoval.jpg" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=80';" alt="Foto de João Chapoval" style="height: 380px; object-fit: cover; object-position: center 15%;">
+      <h3>João Chapoval</h3>
+      <p>Criador da SuinoTech e acadêmico do 4º semestre de Administração na FEMA (Santa Rosa/RS).</p>
+    </div>
+    <div class="card">
+      <img class="foto-pig" src="augustoprunzel.jpg" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&auto=format&fit=crop&q=80';" alt="Foto de Augusto Prunzel" style="height: 380px; object-fit: cover; object-position: center 20%;">
+      <h3>Augusto Prunzel</h3>
+      <p>Criador da SuinoTech e acadêmico do 4º semestre de Administração na FEMA (Santa Rosa/RS).</p>
+    </div>
+    <div class="card">
+      <img class="foto-pig" src="gustavorogerio.jpg" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=500&auto=format&fit=crop&q=80';" alt="Foto de Gustavo Jarczewski" style="height: 380px; object-fit: cover; object-position: center 15%;">
+      <h3>Gustavo Jarczewski</h3>
+      <p>Criador da SuinoTech e acadêmico do 4º semestre de Administração na FEMA (Santa Rosa/RS).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     PÁGINA 3: MERCADO (COTAÇÕES DO SUÍNO, INSUMOS & RELAÇÃO DE TROCA)
+     ========================================================================== -->
+<section class="page" id="mercado">
+ <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; margin-bottom: 28px;">
+  <div>
+    <span class="badge-verde" style="margin-bottom: 8px; display: inline-flex;">
+      <i class="fa-solid fa-chart-pie"></i> Indicadores Regionais da Suinocultura
+    </span>
+    <h1>Visão de Mercado Suinícola</h1>
+    <p>Acompanhe cotações atualizadas do suíno vivo, custos dos principais insumos nutricionais (milho e farelo de soja) e a relação de troca por estado.</p>
+  </div>
+
+  <!-- FILTROS ESTILIZADOS -->
+  <div class="filtros-mercado-wrapper">
+    <!-- Filtro de Estado -->
+    <div class="filtros-p" id="filtro-estado" role="group" aria-label="Selecione o Estado">
+      <button type="button" class="active" data-uf="RS">
+        <i class="fa-solid fa-location-dot"></i> RS
+      </button>
+      <button type="button" data-uf="SC">
+        <i class="fa-solid fa-location-dot"></i> SC
+      </button>
+      <button type="button" data-uf="PR">
+        <i class="fa-solid fa-location-dot"></i> PR
+      </button>
+    </div>
+
+    <!-- Filtro de Unidade de Medida -->
+    <div class="filtros-p" id="filtro-unidade" role="group" aria-label="Selecione a Unidade">
+      <button type="button" class="active" data-unit="kg">
+        <i class="fa-solid fa-weight-hanging"></i> Kg Vivo
+      </button>
+      <button type="button" data-unit="15">
+        <i class="fa-solid fa-box"></i> Arroba (15 kg)
+      </button>
+    </div>
+  </div>
+</div>
+
+  <h2>Cotações do Suíno Vivo nas Principais Praças</h2>
+  <!-- GRADE DO SUÍNO + GRÁFICO HISTÓRICO DA COTAÇÃO -->
+  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 36px;">
+    <div id="grid-suinos"></div>
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h3 style="margin:0; font-size: 17px;"><i class="fa-solid fa-chart-line text-rosa mr-2"></i>Histórico do Suíno Vivo</h3>
+        <span class="badge-rosa" style="font-size: 10px;" id="badge-status-cotacao">🔴 Ao Vivo</span>
+      </div>
+      <div class="chartbox" style="height: 180px;"><canvas id="cCotacaoSuino" role="img" aria-label="Histórico de cotação do suíno vivo"></canvas></div>
+    </div>
+  </div>
+
+  <h2>Custo dos Insumos de Alimentação Animal</h2>
+  <!-- GRADE DOS INSUMOS + GRÁFICO COMPARATIVO MILHO VS SOJA -->
+  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 36px;">
+    <div class="grid" id="grid-insumos" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;"></div>
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h3 style="margin:0; font-size: 17px;"><i class="fa-solid fa-chart-area text-verde mr-2"></i>Evolução Milho vs. Soja</h3>
+        <span class="badge-verde" style="font-size: 10px;">R$/tonelada</span>
+      </div>
+      <div class="chartbox" style="height: 180px;"><canvas id="cCotacaoInsumos" role="img" aria-label="Evolução comparativa de insumos"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card destaque" style="margin: 24px 0 36px 0; padding: 24px;">
+    <h3><i class="fa-solid fa-calculator text-verde mr-2"></i> Formulador & Custo por Tonelada de Ração</h3>
+    <p class="note">Ajuste as proporções da dieta da granja para calcular o custo estimado por tonelada (1.000 kg).</p>
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+      <div>
+        <label for="f-milho">% Milho</label>
+        <input type="number" id="f-milho" inputmode="decimal" value="70" min="0" max="100" step="1">
+      </div>
+      <div>
+        <label for="f-soja">% Farelo de Soja</label>
+        <input type="number" id="f-soja" inputmode="decimal" value="22" min="0" max="100" step="1">
+      </div>
+      <div>
+        <label for="f-nucleo">% Núcleo / Premix</label>
+        <input type="number" id="f-nucleo" inputmode="decimal" value="8" min="0" max="100" step="1">
+      </div>
+      <div style="background: var(--superficie-2); border: 1px solid var(--linha); border-radius: 10px; padding: 14px; text-align: center;">
+        <span class="note">Custo Estimado / Tonelada</span>
+        <div style="font: 700 24px var(--titulos); color: var(--verde); margin-top: 4px;" id="f-res-ton">R$ 1.814,58</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Poder de Compra do Suinocultor (Relação de Troca)</h2>
+  <p class="note" style="margin-bottom: 20px;">Quantidade de quilos de insumo alimentício que o produtor consegue adquirir com a venda de 1 kg de suíno vivo.</p>
+  <div class="grid" id="grid-troca" style="margin-bottom: 40px;"></div>
+
+  <h2>Simulador de Receita &amp; Margem Bruta do Lote de Porcos</h2>
+  <div class="card destaque" style="padding: 32px;">
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; align-items: center;">
+      <form id="form-calculadora-m" onsubmit="return false;">
+        <label for="m-alojados">Animais Alojados no Lote</label>
+        <input type="number" id="m-alojados" inputmode="numeric" value="1000" min="1">
+
+        <label for="m-mortalidade">Mortalidade Estimada (%)</label>
+        <input type="number" id="m-mortalidade" inputmode="decimal" value="2.0" step="0.1" min="0">
+
+        <label for="m-peso">Peso Médio de Abate (kg)</label>
+        <input type="number" id="m-peso" inputmode="decimal" value="115" step="0.5" min="1">
+
+        <label for="m-conversao">Conversão Alimentar Estimada (kg/kg)</label>
+        <input type="number" id="m-conversao" inputmode="decimal" value="2.40" step="0.05" min="1.5">
+
+        <div style="margin-top: 18px; padding: 14px; background: var(--superficie-2); border: 1px solid var(--linha); border-radius: 10px;">
+          <span class="note">Preço Base do Suíno Vivo Utilizado:</span>
+          <div style="font-weight: 700; color: var(--rosa); font-size: 18px;" id="m-preco-base">R$ 6,10 / kg</div>
+        </div>
+      </form>
+
+      <div style="background: var(--superficie-2); border: 1px solid var(--linha); border-radius: 16px; padding: 28px; text-align: center;">
+        <i class="fa-solid fa-piggy-bank text-rosa" style="font-size: 44px; margin-bottom: 14px;"></i>
+        <div style="margin-bottom: 16px;">
+          <span class="note" style="text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">Animais Vendidos</span>
+          <div style="font: 700 24px var(--titulos); color: #fff; margin-top: 2px;" id="m-res-animais">980 cabeças</div>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <span class="note" style="text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">Receita Bruta Total</span>
+          <div style="font: 700 30px var(--titulos); color: #fff; margin-top: 2px;" id="m-res-receita">R$ 687.470,00</div>
+        </div>
+        <div style="border-top: 1px solid var(--linha); padding-top: 14px;">
+          <span class="note" style="text-transform: uppercase; font-weight: bold; color: var(--verde); letter-spacing: 0.5px;">Margem Estimada Sobre Ração</span>
+          <div style="font: 700 32px var(--titulos); color: var(--verde); margin-top: 2px;" id="m-res-margem">R$ 245.000,00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     PÁGINA 4: COMO FUNCIONA (METODOLOGIA E ÍNDICE SUINOTECH ISE)
+     ========================================================================== -->
+<section class="page" id="como-funciona">
+  <span class="badge-rosa" style="margin-bottom: 10px; display: inline-flex;"><i class="fa-solid fa-gears"></i> Metodologia Passo a Passo</span>
+  <h1>Como Funciona a Plataforma SuinoTech</h1>
+  <p>A SuinoTech conecta a rotina diária nos galpões de suínos à análise financeira em tempo real em 5 passos simples:</p>
+
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">Passo 1</div>
+      <h3>Coleta no Galpão</h3>
+      <p>O produtor ou zootecnista registra pesagens, mortalidade, ração consumida e vacinações via app no celular, mesmo sem internet.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Passo 2</div>
+      <h3>Processamento Zootécnico</h3>
+      <p>A plataforma apura instantaneamente a conversão alimentar, GPD, mortalidade acumulada e o Custo por Quilo Vivo Produzido.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Passo 3</div>
+      <h3>Detecção de Desvios</h3>
+      <p>O algoritmo cruza os dados com o padrão da linha genética do plantel e emite alertas automáticos de desperdício ou sanidade.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Passo 4</div>
+      <h3>Ação Corretiva</h3>
+      <p>A equipe de campo ajusta a regulagem de comedouros, manejo de cortinas ou ventilação no galpão com foco no gargalo identificado.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Passo 5</div>
+      <h3>Resultado Financeiro</h3>
+      <p>O painel quantifica o impacto final em reais (R$) por animal alojado e por quilo comercializado no encerramento do lote.</p>
+    </div>
+  </div>
+
+  <h2 style="margin-top: 56px;">Índice SuinoTech de Eficiência (ISE)</h2>
+  <p>O ISE é uma pontuação algorítmica de 0 a 100 que consolida os 5 fatores zootécnicos e financeiros mais decisivos para a rentabilidade suinícola:</p>
+
+  <ul style="padding-left: 20px; margin-bottom: 28px;" class="space-y-3">
+    <li><b>Conversão Alimentar (Peso: 30%):</b> Eficiência de conversão da ração em peso vivo (kg ração / kg ganho de peso).</li>
+    <li><b>Ganho de Peso Médio Diário - GPD (Peso: 20%):</b> Velocidade de crescimento ponderal dos porcos ao longo do alojamento.</li>
+    <li><b>Taxa de Mortalidade Acumulada (Peso: 20%):</b> Percentual de perdas sobre o total de cabeças alojadas.</li>
+    <li><b>Custo Total por Quilo Vivo (Peso: 15%):</b> Soma de ração, medicamentos, água e energia dividida pela massa total produzida.</li>
+    <li><b>Margem Bruta por Animal Alojado (Peso: 15%):</b> Lucro financeiro estimado por porco alojado após despesas diretas.</li>
+  </ul>
+
+  <h3>Simulação Comparativa de Lotes na Granja</h3>
+  <p class="note" style="margin-bottom: 16px;">Exemplo prático em um lote de terminação com 500 suínos alojados (peso de abate: 115 kg):</p>
+
+  <div class="tabela" style="margin-bottom: 24px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Indicador Zootécnico / Financeiro</th>
+          <th style="color: var(--verde);">Lote A (Otimizado com SuinoTech)</th>
+          <th style="color: var(--rosa);">Lote B (Manejo Convencional)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Conversão alimentar (kg/kg)</td>
+          <td style="color: var(--verde); font-weight: 600;">2,38</td>
+          <td style="color: var(--rosa); font-weight: 600;">2,65</td>
+        </tr>
+        <tr>
+          <td>Ganho de peso diário (GPD)</td>
+          <td>0,890 kg/dia</td>
+          <td>0,800 kg/dia</td>
+        </tr>
+        <tr>
+          <td>Mortalidade acumulada</td>
+          <td>1,2%</td>
+          <td>4,0%</td>
+        </tr>
+        <tr>
+          <td>Custo Total por Cabeça Alojada</td>
+          <td>R$ 430,00</td>
+          <td>R$ 484,00</td>
+        </tr>
+        <tr>
+          <td>Margem estimada por animal</td>
+          <td style="color: var(--verde); font-weight: 700;">R$ 352,00</td>
+          <td style="color: var(--rosa); font-weight: 700;">R$ 298,00</td>
+        </tr>
+        <tr style="font-weight: 700; background: var(--superficie-2);">
+          <td style="color: var(--rosa);">Índice SuinoTech (ISE)</td>
+          <td style="color: var(--verde); font-size: 16px;">88,0 pontos (Excelente)</td>
+          <td style="color: var(--rosa); font-size: 16px;">62,0 pontos (Atenção)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     PÁGINA 5: FUNCIONALIDADES (TODOS OS MÓDULOS DETALHADOS DA PLATAFORMA)
+     ========================================================================== -->
+<section class="page" id="funcionalidades">
+  <div style="text-align: center; max-width: 900px; margin: 0 auto 40px;">
+    <span class="badge-rosa" style="margin-bottom: 12px; display: inline-flex;">
+      <i class="fa-solid fa-microchip"></i> Recursos Completos para Granja
+    </span>
+    <h1>Plataforma SuinoTech</h1>
+    <p style="margin: 0 auto; color: var(--suave); font-size: 16px;">
+      Conheça todos os módulos integrados projetados para unir o manejo zootécnico dos porcos ao fluxo de caixa real da sua propriedade.
+    </p>
+  </div>
+
+  <!-- Grelha fixa de 4 colunas em desktops e responsiva em dispositivos móveis -->
+  <div class="grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+    
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin: 0;">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 8px; margin-bottom:14px;">
+          <h3 class="text-rosa" style="margin:0; font-size: 18px;"><i class="fa-solid fa-wallet mr-1.5"></i> Gestão Financeira</h3>
+          <span class="badge-verde" style="font-size:10px; flex-shrink:0;">Caixa</span>
+        </div>
+        <p style="font-size:13.5px; margin:0; color:var(--suave); line-height: 1.5;">
+          Mantenha contas a pagar e receber sob controle rigoroso, administrando fornecedores de insumos, fretes e liquidações de lotes.
+        </p>
+      </div>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin: 0;">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 8px; margin-bottom:14px;">
+          <h3 class="text-rosa" style="margin:0; font-size: 18px;"><i class="fa-solid fa-scale-balanced mr-1.5"></i> Controle por Animal</h3>
+          <span class="badge-rosa" style="font-size:10px; flex-shrink:0;">Entradas &amp; Saídas</span>
+        </div>
+        <p style="font-size:13.5px; margin:0; color:var(--suave); line-height: 1.5;">
+          Cadastre receitas e custos por cabeça alojada. Saiba exatamente quanto cada porco consumiu em ração, vacinas e energia elétrica.
+        </p>
+      </div>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin: 0;">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 8px; margin-bottom:14px;">
+          <h3 class="text-rosa" style="margin:0; font-size: 18px;"><i class="fa-solid fa-chart-line mr-1.5"></i> Indicadores Financeiros</h3>
+          <span class="badge-verde" style="font-size:10px; flex-shrink:0;">DRE &amp; Balanço</span>
+        </div>
+        <p style="font-size:13.5px; margin:0; color:var(--suave); line-height: 1.5;">
+          Demonstrativo do Resultado do Exercício (DRE) em tempo real, fluxo de caixa projetado e balanço simplificado para apoio contábil.
+        </p>
+      </div>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin: 0;">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 8px; margin-bottom:14px;">
+          <h3 class="text-rosa" style="margin:0; font-size: 18px;"><i class="fa-solid fa-piggy-bank mr-1.5"></i> Zootecnia de Precisão</h3>
+          <span class="badge-rosa" style="font-size:10px; flex-shrink:0;">Manejo</span>
+        </div>
+        <p style="font-size:13.5px; margin:0; color:var(--suave); line-height: 1.5;">
+          Acompanhe a curva de peso, conversão alimentar (kg/kg), ganho médio diário (GPD) e taxa de mortalidade em gráficos interativos.
+        </p>
+      </div>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin: 0;">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 8px; margin-bottom:14px;">
+          <h3 class="text-rosa" style="margin:0; font-size: 18px;"><i class="fa-solid fa-wheat-awn mr-1.5"></i> Fábrica de Ração</h3>
+          <span class="badge-verde" style="font-size:10px; flex-shrink:0;">Nutrição</span>
+        </div>
+        <p style="font-size:13.5px; margin:0; color:var(--suave); line-height: 1.5;">
+          Controle formulações por fase (maternidade, creche, crescimento e terminação) e monitore o estoque de milho, farelo de soja e premix.
+        </p>
+      </div>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin: 0;">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 8px; margin-bottom:14px;">
+          <h3 class="text-rosa" style="margin:0; font-size: 18px;"><i class="fa-solid fa-boxes-stacked mr-1.5"></i> Almoxarifado Veterinário</h3>
+          <span class="badge-rosa" style="font-size:10px; flex-shrink:0;">Estoque</span>
+        </div>
+        <p style="font-size:13.5px; margin:0; color:var(--suave); line-height: 1.5;">
+          Gerencie medicamentos, vacinas, desinfetantes e peças de reposição dos galpões com alertas de vencimento e aviso de estoque mínimo.
+        </p>
+      </div>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin: 0;">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 8px; margin-bottom:14px;">
+          <h3 class="text-rosa" style="margin:0; font-size: 18px;"><i class="fa-solid fa-file-invoice-dollar mr-1.5"></i> Relatórios Executivos</h3>
+          <span class="badge-verde" style="font-size:10px; flex-shrink:0;">PDF &amp; Excel</span>
+        </div>
+        <p style="font-size:13.5px; margin:0; color:var(--suave); line-height: 1.5;">
+          Exporte relatórios zootécnicos e financeiros em PDF e Excel com um clique para apresentar a consultores veterinários e bancos.
+        </p>
+      </div>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin: 0;">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 8px; margin-bottom:14px;">
+          <h3 class="text-rosa" style="margin:0; font-size: 18px;"><i class="fa-solid fa-shield-halved mr-1.5"></i> App Offline &amp; Nuvem</h3>
+          <span class="badge-rosa" style="font-size:10px; flex-shrink:0;">LGPD</span>
+        </div>
+        <p style="font-size:13.5px; margin:0; color:var(--suave); line-height: 1.5;">
+          Coleta 100% offline dentro dos galpões de suínos, sincronização automática em nuvem segura e conformidade total com a LGPD.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ==========================================================================
+     PÁGINA 6: PLANOS E PRECIFICAÇÃO (CALCULADORA, COMPARATIVO & FAQ)
+     ========================================================================== -->
+<section class="page" id="planos">
+  
+  <div class="pricing-hero">
+    <span class="badge-rosa" style="margin: 0 auto 10px; display: inline-flex;">
+      <i class="fa-solid fa-shield-halved"></i> Precificação Transparente
+    </span>
+
+    <h1>Planos e Assinaturas SuinoTech</h1>
+    
+    <p style="margin: 0 auto 14px; text-align: center; font-size: 16px;">
+      Escolha o plano ideal para a capacidade da sua granja. Sem taxas escondidas.
+    </p>
+
+    <p class="note" style="margin: 14px auto 0; text-align: center; max-width: 760px;">
+      <i class="fa-solid fa-circle-info mr-1 text-rosa"></i> Todos os valores e simulações exibidos são hipóteses desenvolvidas para fins de apresentação acadêmica do projeto SuinoTech.
+    </p>
+
+    <div style="margin-top: 28px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+      
+      <div class="filtros-p" id="profile-filters">
+        <button type="button" class="active" data-filter="all"><i class="fa-solid fa-layer-group mr-1.5"></i>Todas as Soluções</button>
+        <button type="button" data-filter="producer"><i class="fa-solid fa-tractor mr-1.5"></i>Produtor Independente</button>
+        <button type="button" data-filter="integrator"><i class="fa-solid fa-sitemap mr-1.5"></i>Integradoras & Agroindústrias</button>
+      </div>
+
+      <div class="toggle-billing">
+        <span id="label-monthly" style="font-weight: 600; font-size: 14px;">Pagamento Mensal</span>
+        <div class="toggle-switch active" id="billing-toggle" role="switch" aria-checked="true" tabindex="0" aria-label="Alternar Faturamento Mensal ou Anual">
+          <div class="toggle-handle"></div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span id="label-annual" style="font-weight: 700; font-size: 14px; color: var(--rosa);">Anual</span>
+          <span class="badge-verde" style="font-size: 11px; font-weight: 700;">Economize 20%</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="space-y-12">
+
+    <div id="card-producer" class="card destaque" style="padding: 32px; position: relative; overflow: hidden;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; border-bottom: 1px solid var(--linha); padding-bottom: 22px; margin-bottom: 28px;">
+        <div>
+          <span class="badge-rosa"><i class="fa-solid fa-tractor"></i> Plano Produtor Independente</span>
+          <h2 style="margin-top: 10px; margin-bottom: 4px;">Controle completo da granja de suínos</h2>
+          <p class="note" style="margin: 0;">Contratação direta com 14 dias de teste grátis sem compromisso.</p>
+        </div>
+        <span class="badge-verde" style="font-size: 12.5px;"><i class="fa-solid fa-bolt"></i> Ativação Imediata</span>
+      </div>
+
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 36px; align-items: start;">
+        
+        <div>
+          <label style="margin-top: 0; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: var(--suave);">
+            1. Selecione a capacidade do plantel (cabeças alojadas):
+          </label>
+          
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0 22px;">
+            <button type="button" class="btn-preset btn sec" data-cap="500" style="padding: 10px 4px; font-size: 13px; margin: 0;">500 cab.</button>
+            <button type="button" class="btn-preset btn" data-cap="1000" style="padding: 10px 4px; font-size: 13px; margin: 0;">1.000 cab.</button>
+            <button type="button" class="btn-preset btn sec" data-cap="1500" style="padding: 10px 4px; font-size: 13px; margin: 0;">1.500 cab.</button>
+            <button type="button" class="btn-preset btn sec" data-cap="2000" style="padding: 10px 4px; font-size: 13px; margin: 0;">2.000 cab.</button>
+          </div>
+
+          <div style="background: var(--superficie-2); padding: 20px; border-radius: 14px; border: 1px solid var(--linha);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span class="note">Capacidade de Plantel:</span>
+              <span style="font-size: 22px; font-weight: 700; color: var(--rosa);" id="producer-cap-display">1.000 <small style="font-size: 12px; color: var(--suave); font-weight:400;">cabeças</small></span>
+            </div>
+
+            <input type="range" id="producer-range" min="300" max="2000" step="50" value="1000" aria-label="Ajustar capacidade de cabeças alojadas no plano">
+
+            <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: var(--suave); margin-top: 10px;" class="note">
+              <span>300 cab.</span>
+              <span>1.000 cab.</span>
+              <span>2.000 cab. (Limite Self-Service)</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 28px;">
+            <h4 style="font-size: 13px; text-transform: uppercase; color: var(--suave); margin-bottom: 14px;">O que está incluído no seu plano:</h4>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; font-size: 13.5px;">
+              <div><i class="fa-solid fa-circle-check text-verde mr-1.5"></i> Gestão de Lotes de Porcos</div>
+              <div><i class="fa-solid fa-circle-check text-verde mr-1.5"></i> App Mobile Offline para Galpão</div>
+              <div><i class="fa-solid fa-circle-check text-verde mr-1.5"></i> Rastreabilidade Sanitária</div>
+              <div><i class="fa-solid fa-circle-check text-verde mr-1.5"></i> Conversão Alimentar e GPD</div>
+              <div><i class="fa-solid fa-circle-check text-verde mr-1.5"></i> Alertas de Desperdício</div>
+              <div><i class="fa-solid fa-circle-check text-verde mr-1.5"></i> Exportação PDF e Excel</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="price-output-box">
+            <span class="badge-rosa" style="margin-bottom: 8px;">Mais Escolhido</span>
+            <p class="note" style="margin-top: 6px;">Investimento para <strong id="producer-cap-text" class="text-white">1.000 cabeças</strong>:</p>
+            
+            <div class="price-val" id="producer-price-display">
+              R$ 168,00<small>/mês</small>
+            </div>
+
+            <div id="producer-billing-info" style="font-size: 12.5px; margin-bottom: 20px;" class="note">
+              Faturado anualmente (R$ 2.016,00/ano) • <strong class="text-rosa">Economia de R$ 504,00</strong>
+            </div>
+
+            <button type="button" class="btn" id="btn-open-trial" style="width: 100%; padding: 14px; font-size: 16px;">
+              <i class="fa-solid fa-rocket"></i> Iniciar Teste Grátis de 14 Dias
+            </button>
+            
+            <p class="note" style="margin-top: 14px; font-size: 11.5px;">
+              <i class="fa-solid fa-shield-cat text-rosa mr-1"></i> Sem cobrança nos 14 primeiros dias. Cancele quando quiser.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-top: 32px; background: var(--superficie-2); border: 1px solid var(--linha); border-radius: 14px; padding: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+          <div style="display: flex; gap: 16px; align-items: flex-start; max-width: 680px;">
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: var(--amber-bg); border: 1px solid var(--amber); display: flex; align-items: center; justify-content: center; color: var(--amber); flex-shrink: 0;">
+              <i class="fa-solid fa-arrow-trend-up text-lg"></i>
+            </div>
+            <div>
+              <h4 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+                Regra Transparente para Animais Excedentes
+                <span class="badge-verde" style="font-size: 10px; padding: 2px 8px;">Sem Travas</span>
+              </h4>
+              <p class="note" style="margin-top: 6px; color: var(--suave);">
+                Se o lote crescer temporariamente acima do limite contratado, o sistema não para! Adicionamos apenas <strong>R$ 25/mês por bloco de 100 porcos extras</strong> (ou fração).
+              </p>
+            </div>
+          </div>
+
+          <div style="background: var(--superficie); padding: 14px 20px; border-radius: 12px; border: 1px solid var(--linha); text-align: right; min-width: 220px;">
+            <span class="note">Simular Porcos Excedentes:</span>
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 6px;">
+              <button type="button" class="btn sec" id="excess-minus" style="padding: 4px 12px; margin:0; font-size: 14px;">-</button>
+              <span id="excess-count-display" style="font-weight: 700; font-size: 16px;">+0 cab.</span>
+              <button type="button" class="btn sec" id="excess-plus" style="padding: 4px 12px; margin:0; font-size: 14px;">+</button>
+            </div>
+            <div id="excess-cost-display" class="note" style="margin-top: 6px; color: var(--verde);">
+              Nenhum excedente
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="card-integrator" class="card destaque" style="padding: 32px; position: relative; overflow: hidden; margin-top: 36px;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; border-bottom: 1px solid var(--linha); padding-bottom: 22px; margin-bottom: 28px;">
+        <div>
+          <span class="badge-verde"><i class="fa-solid fa-building-user"></i> Integradoras & Agroindústrias (Enterprise)</span>
+          <h2 style="margin-top: 10px; margin-bottom: 4px;">Visão executiva multi-granja centralizada</h2>
+          <p class="note" style="margin: 0;">Solução corporativa para conectar a integradora e seus produtores parceiros.</p>
+        </div>
+        <span class="badge-rosa" style="font-size: 12.5px;"><i class="fa-solid fa-headset"></i> SLA Prioritário 2h</span>
+      </div>
+
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 32px;">
+        
+        <div style="background: var(--superficie-2); padding: 20px; border-radius: 14px; border: 1px solid var(--linha);">
+          <div style="color: var(--rosa); font-size: 22px; margin-bottom: 10px;"><i class="fa-solid fa-server"></i></div>
+          <span class="note" style="text-transform: uppercase; font-weight:700;">1. Mensalidade Base</span>
+          <h3 style="margin: 6px 0 4px;">R$ 2.500 <small class="note">/mês</small></h3>
+          <p class="note" style="margin:0;">Plataforma central, BI avançado, benchmarking de cooperados e APIs ERP.</p>
+        </div>
+
+        <div style="background: var(--superficie-2); padding: 20px; border-radius: 14px; border: 1px solid var(--linha);">
+          <div style="color: var(--verde); font-size: 22px; margin-bottom: 10px;"><i class="fa-solid fa-network-wired"></i></div>
+          <span class="note" style="text-transform: uppercase; font-weight:700;">2. Custo por Granja</span>
+          <h3 style="margin: 6px 0 4px;">R$ 35 a R$ 45 <small class="note">/granja/mês</small></h3>
+          <p class="note" style="margin:0;">App móvel completo para produtores integrados com escalonamento regressivo.</p>
+        </div>
+
+        <div style="background: var(--superficie-2); padding: 20px; border-radius: 14px; border: 1px solid var(--linha);">
+          <div style="color: #3b82f6; font-size: 22px; margin-bottom: 10px;"><i class="fa-solid fa-handshake-angle"></i></div>
+          <span class="note" style="text-transform: uppercase; font-weight:700;">3. Implantação e Setup</span>
+          <h3 style="margin: 6px 0 4px;">R$ 5.000 <small class="note">taxa única</small></h3>
+          <p class="note" style="margin:0;">Parametrização, integração de banco de dados e treinamento da equipe veterinária.</p>
+        </div>
+
+      </div>
+
+      <div style="background: var(--superficie-2); border: 1px solid var(--linha); border-radius: 16px; padding: 28px;">
+        <h3 style="margin-bottom: 18px; font-size: 19px;" class="text-white"><i class="fa-solid fa-calculator text-rosa mr-2"></i> Calculadora de Investimento Enterprise</h3>
+
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; align-items: center;">
+          
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="note">Número de Granjas de Suínos Conectadas:</span>
+              <span style="font-size: 22px; font-weight: 700; color: var(--rosa);" id="integrator-farms-display">15 <small style="font-size: 12px; color: var(--suave); font-weight:400;">granjas</small></span>
+            </div>
+
+            <input type="range" id="integrator-range" min="5" max="100" step="5" value="15" aria-label="Ajustar número de granjas conectadas">
+
+            <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: var(--suave); margin-top: 8px;" class="note">
+              <span>5 granjas</span>
+              <span>50 granjas (Tier 2)</span>
+              <span>100+ granjas</span>
+            </div>
+
+            <div style="background: var(--superficie); padding: 14px; border-radius: 10px; border: 1px solid var(--linha); margin-top: 16px; font-size: 12.5px;" class="note">
+              <p style="margin-bottom: 4px;">• Valor por granja para este volume: <strong id="integrator-rate-text" class="text-white">R$ 45,00/mês</strong></p>
+              <p style="margin-bottom: 4px;">• Subtotal Granjas: <strong id="integrator-subtotal-text" class="text-white">R$ 675,00/mês</strong></p>
+              <p style="margin: 0;">• Plataforma Central Executiva: <strong class="text-white">R$ 2.500,00/mês</strong></p>
+            </div>
+          </div>
+
+          <div class="price-output-box" style="margin:0;">
+            <span class="note">Estimativa Mensal Recorrente:</span>
+            <div class="price-val" id="integrator-price-display">
+              R$ 2.698,75<small>/mês</small>
+            </div>
+
+            <div id="integrator-billing-info" style="font-size: 12.5px; margin-bottom: 18px;" class="note">
+              <span class="badge-verde" style="font-size:11px;">Inclui 15% de desconto no contrato Anual Enterprise</span>
+            </div>
+
+            <p class="note" style="font-size: 11.5px; margin-bottom: 18px;">
+              + Taxa Única de Setup & Onboarding: <strong>R$ 5.000,00</strong>
+            </p>
+
+            <button type="button" class="btn sec" id="btn-open-enterprise" style="width: 100%; padding: 14px; font-size: 15px; background: #ffffff; color: #0d1513; border-color: #ffffff;">
+              <i class="fa-solid fa-calendar-check text-rosa"></i> Agendar Demonstração Enterprise
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div id="comparativo" style="margin-top: 60px;">
+    <div style="text-align: center; width: 100%; max-width: 800px; margin: 0 auto 28px;">
+      <h2 style="text-align: center; margin-bottom: 8px;">Comparativo Detalhado de Recursos</h2>
+      <p class="note" style="text-align: center; margin: 0 auto; display: block;">
+        Veja exatamente o que cada modalidade oferece para a gestão da sua suinocultura
+      </p>
+    </div>
+
+    <div class="tabela">
+      <table>
+        <thead>
+          <tr>
+            <th>Recurso / Funcionalidade</th>
+            <th style="color: var(--rosa); width: 35%;">Produtor Independente</th>
+            <th style="color: var(--verde); width: 35%;">Integradoras & Agroindústrias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background: var(--superficie-2);">
+            <td colspan="3" style="font-weight: 700; color: var(--suave); font-size: 12px; text-transform: uppercase;">
+              <i class="fa-solid fa-piggy-bank mr-2 text-rosa"></i> Gestão Zootécnica de Suínos
+            </td>
+          </tr>
+          <tr>
+            <td>Controle de Lotes de Porcos e Maternidade</td>
+            <td><i class="fa-solid fa-circle-check text-verde mr-1"></i> Completo</td>
+            <td><i class="fa-solid fa-circle-check text-verde mr-1"></i> Completo + Multi-granja</td>
+          </tr>
+          <tr>
+            <td>App Mobile Offline com Sincronização</td>
+            <td><i class="fa-solid fa-circle-check text-verde mr-1"></i> Incluído</td>
+            <td><i class="fa-solid fa-circle-check text-verde mr-1"></i> Incluído para todos produtores</td>
+          </tr>
+          <tr>
+            <td>Rastreabilidade Sanitária e Vacinas</td>
+            <td><i class="fa-solid fa-circle-check text-verde mr-1"></i> Sim</td>
+            <td><i class="fa-solid fa-circle-check text-verde mr-1"></i> Sim + Auditoria de Compliance</td>
+          </tr>
+          <tr>
+            <td>Previsão de Conversão Alimentar e GPD</td>
+            <td>Padrão da Linhagem</td>
+            <td><i class="fa-solid fa-circle-check text-verde mr-1"></i> Algoritmo Preditivo Avançado</td>
+          </tr>
+
+          <tr style="background: var(--superficie-2);">
+            <td colspan="3" style="font-weight: 700; color: var(--suave); font-size: 12px; text-transform: uppercase;">
+              <i class="fa-solid fa-chart-line mr-2 text-rosa"></i> Gestão Estratégica & Consolidação
+            </td>
+          </tr>
+          <tr>
+            <td>Dashboard Consolidado da Agroindústria</td>
+            <td style="color: var(--suave);"><i class="fa-solid fa-minus mr-1"></i> Não aplicável</td>
+            <td><i class="fa-solid fa-circle-check text-verde mr-1"></i> Visão Executiva em Tempo Real</td>
+          </tr>
+          <tr>
+            <td>Benchmarking e Ranking de Cooperados</td>
+            <td style="color: var(--suave);"><i class="fa-solid fa-minus mr-1"></i> Não aplicável</td>
+            <td><i class="fa-solid fa-circle-check text-verde mr-1"></i> Comparativo de Desempenho</td>
+          </tr>
+          <tr>
+            <td>Integração API com ERPs (TOTVS, SAP, Senior)</td>
+            <td style="color: var(--suave);"><i class="fa-solid fa-xmark mr-1"></i> Não disponível</td>
+            <td><i class="fa-solid fa-circle-check text-verde mr-1"></i> APIs RESTful e Webhooks</td>
+          </tr>
+
+          <tr style="background: var(--superficie-2);">
+            <td colspan="3" style="font-weight: 700; color: var(--suave); font-size: 12px; text-transform: uppercase;">
+              <i class="fa-solid fa-headset mr-2 text-rosa"></i> Suporte & Treinamento
+            </td>
+          </tr>
+          <tr>
+            <td>Treinamento e Onboarding</td>
+            <td>Vídeo-aulas + Base de Conhecimento</td>
+            <td><i class="fa-solid fa-circle-check text-verde mr-1"></i> Projeto Dedicado Presencial/Remoto</td>
+          </tr>
+          <tr>
+            <td>SLA de Atendimento</td>
+            <td>Até 24 horas úteis</td>
+            <td><i class="fa-solid fa-bolt text-rosa mr-1"></i> SLA Prioritário de 2 horas</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="faq" style="margin-top: 60px;">
+    <div style="text-align: center; max-width: 800px; margin: 0 auto 32px;">
+      <h2>Perguntas Frequentes (FAQ)</h2>
+      <p class="note" style="margin: 0 auto; text-align: center;">
+        Dúvidas comuns sobre a implantação e utilização da SuinoTech na sua granja
+      </p>
+    </div>
+
+    <div style="max-width: 850px; margin: 0 auto;">
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-ans-1">
+          <span>O teste grátis de 14 dias exige cartão de crédito no cadastro?</span>
+          <i class="fa-solid fa-chevron-down faq-icon"></i>
+        </button>
+        <div id="faq-ans-1" class="faq-answer">
+          Sim, solicitamos os dados do cartão no momento do cadastro do Produtor Independente para assegurar a continuidade do serviço. Contudo, absolutamente nenhum valor é cobrado durante os 14 primeiros dias. Você pode cancelar com 1 clique a qualquer momento.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-ans-2">
+          <span>Como é contabilizada a capacidade de porcos no sistema?</span>
+          <i class="fa-solid fa-chevron-down faq-icon"></i>
+        </button>
+        <div id="faq-ans-2" class="faq-answer">
+          Contabilizamos a capacidade simultânea de animais alojados na granja (matrizes, leitões na creche e porcos em terminação). Não é um limite acumulativo anual, mas sim referente ao pico simultâneo do seu plantel.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-ans-3">
+          <span>O que acontece se a granja ultrapassar temporariamente o limite contratado?</span>
+          <i class="fa-solid fa-chevron-down faq-icon"></i>
+        </button>
+        <div id="faq-ans-3" class="faq-answer">
+          Sua granja não para! O sistema não bloqueia. Adicionamos automaticamente blocos excedentes de 100 animais pelo valor transparente de R$ 25/mês por bloco, avisando previamente por e-mail.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-ans-4">
+          <span>Como funciona a implantação da taxa única para Integradoras?</span>
+          <i class="fa-solid fa-chevron-down faq-icon"></i>
+        </button>
+        <div id="faq-ans-4" class="faq-answer">
+          Para integradoras e agroindústrias, realizamos um projeto de onboarding técnico. A taxa de R$ 5.000 cobre a parametrização do sistema, migração de dados históricos, configuração de APIs e treinamento da equipe de campo.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-ans-5">
+          <span>O aplicativo móvel funciona dentro do galpão sem sinal de internet?</span>
+          <i class="fa-solid fa-chevron-down faq-icon"></i>
+        </button>
+        <div id="faq-ans-5" class="faq-answer">
+          Sim! Nosso app móvel foi desenvolvido especialmente para o ambiente rural. Toda a coleta de dados (coberturas, partos, mortalidade, ração) funciona 100% offline. Os dados sincronizam automaticamente assim que o celular conectar ao Wi-Fi ou 4G.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-ans-6">
+          <span>Posso alterar de plano ou cancelar quando desejar?</span>
+          <i class="fa-solid fa-chevron-down faq-icon"></i>
+        </button>
+        <div id="faq-ans-6" class="faq-answer">
+          Com certeza. No plano Mensal não há fidelidade, podendo ser cancelado a qualquer momento. No plano Anual, você garante o desconto exclusivo de 20% durante os 12 meses do contrato.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 60px; background: linear-gradient(135deg, var(--superficie-2) 0%, var(--superficie) 100%); border: 1px solid var(--rosa); border-radius: 20px; padding: 40px 28px; text-align: center; position: relative;">
+    <h2 style="margin-bottom: 12px;">Pronto para transformar a gestão financeira da sua granja?</h2>
+    <p style="margin: 0 auto 24px; color: var(--suave); font-size: 16px;">Junte-se a produtores e integradoras que aumentaram o GPD e reduziram desperdícios na suinocultura com a SuinoTech.</p>
+    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 16px;">
+      <button type="button" class="btn" id="btn-banner-trial"><i class="fa-solid fa-rocket"></i> Testar 14 Dias Grátis (Produtor)</button>
+      <button type="button" class="btn sec" id="btn-banner-enterprise"><i class="fa-solid fa-building"></i> Falar com Consultor Enterprise</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ==========================================================================
+     PÁGINA 7: CONTATO (FORMULÁRIO, LOCALIZAÇÃO & SUPORTE ACADÊMICO)
+     ========================================================================== -->
+<section class="page" id="contato">
+  <span class="badge-verde" style="margin-bottom: 10px; display: inline-flex;"><i class="fa-solid fa-envelope"></i> Fale Conosco</span>
+  <h1>Entre em Contato com a SuinoTech</h1>
+  <p style="font-size: 16px;">Fale com a equipe do projeto SuinoTech para esclarecimento de dúvidas técnicas, agendamentos acadêmicos ou simulações comerciais.</p>
+
+  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 36px; margin-top: 28px;">
+    <div>
+      <form id="form-contato">
+        <label for="c-nome">Seu Nome Completo *</label>
+        <input type="text" id="c-nome" required placeholder="Ex: João da Silva">
+
+        <label for="c-email">E-mail de Contato *</label>
+        <input type="email" id="c-email" required placeholder="joao@granja.com.br">
+
+        <label for="c-assunto">Assunto Principal *</label>
+        <select id="c-assunto" required>
+          <option value="">Selecione um assunto...</option>
+          <option value="Dúvida Técnica">Dúvida Técnica sobre a Plataforma SuinoTech</option>
+          <option value="Simulação de Plano">Simulação de Plano / Precificação de Granja</option>
+          <option value="Projeto Acadêmico">Contato Acadêmico sobre o Projeto (FEMA)</option>
+          <option value="Outro">Outro Assunto</option>
+        </select>
+
+        <label for="c-mensagem">Sua Mensagem *</label>
+        <textarea id="c-mensagem" rows="5" required placeholder="Escreva sua mensagem detalhada aqui..."></textarea>
+
+        <button class="btn" type="submit" style="margin-top: 20px; width: 100%;">
+          <i class="fa-solid fa-paper-plane"></i> Enviar Mensagem
+        </button>
+      </form>
+    </div>
+
+    <div>
+      <div class="card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 30px;">
+        <div>
+          <h3>Informações Institucionais</h3>
+          <p class="note" style="margin-top: 14px; font-size: 13.5px;">
+            <i class="fa-solid fa-location-dot text-rosa mr-2"></i> Fundação Educacional Machado de Assis (FEMA)<br>
+            Santa Rosa - Rio Grande do Sul, Brasil
+          </p>
+          <p class="note" style="margin-top: 12px; font-size: 13.5px;">
+            <i class="fa-solid fa-envelope text-rosa mr-2"></i> contato@suinotech.com.br
+          </p>
+          <p class="note" style="margin-top: 12px; font-size: 13.5px;">
+            <i class="fa-solid fa-graduation-cap text-rosa mr-2"></i> Projeto Integrador: Empreendedorismo e Gestão no Agronegócio
+          </p>
+        </div>
+
+        <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--linha);">
+          <span class="badge-verde"><i class="fa-solid fa-lock"></i> Privacidade &amp; LGPD</span>
+          <p class="note" style="margin-top: 10px; font-size: 12px;">
+            Garantimos sigilo total dos dados inseridos. As informações enviadas neste formulário são utilizadas estritamente para simulação e avaliação acadêmica.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ==========================================================================
+     MODAIS DE CHECKOUT E DEMONSTRAÇÃO
+     ========================================================================== -->
+
+<!-- MODAL 1: TESTE GRÁTIS PRODUTOR -->
+<div id="modal-trial" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="trial-title">
+  <div class="modal-card">
+    <button type="button" class="modal-close close-modal" aria-label="Fechar modal"><i class="fa-solid fa-xmark"></i></button>
+
+    <div class="badge-rosa" style="margin-bottom: 6px;"><i class="fa-solid fa-rocket"></i> Teste Grátis de 14 Dias</div>
+    <h3 id="trial-title" style="margin-bottom: 4px;">Criar Conta SuinoTech</h3>
+    <p class="note">Configuração selecionada: <strong id="modal-trial-summary" class="text-white">Plano Produtor (1.000 cabeças - Anual)</strong></p>
+
+    <div style="background: var(--superficie-2); padding: 14px; border-radius: 10px; border: 1px solid var(--linha); margin: 16px 0; display: flex; justify-content: space-between; align-items: center; font-size: 13.5px;">
+      <div>
+        <span class="note">Total após os 14 dias grátis:</span>
+        <div style="font-weight: 700; color: #ffffff;" id="modal-trial-price">R$ 168,00/mês</div>
+      </div>
+      <span class="badge-verde" style="font-weight: 700; font-size: 11.5px;">R$ 0,00 HOJE</span>
+    </div>
+
+    <form id="form-modal-trial" class="space-y-3">
+      <div>
+        <label for="m1-nome">Nome Completo *</label>
+        <input type="text" id="m1-nome" required placeholder="Ex: João da Silva">
+      </div>
+
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+          <label for="m1-email">E-mail Profissional *</label>
+          <input type="email" id="m1-email" required placeholder="joao@granja.com">
+        </div>
+        <div>
+          <label for="m1-whats">WhatsApp / Telefone *</label>
+          <input type="tel" id="m1-whats" required placeholder="(55) 99999-0000">
+        </div>
+      </div>
+
+      <div>
+        <label for="m1-granja">Nome da Granja de Suínos *</label>
+        <input type="text" id="m1-granja" required placeholder="Ex: Granja São José">
+      </div>
+
+      <div style="padding-top: 6px;">
+        <label for="m1-card" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Cartão de Crédito (Validação) *</span>
+          <span style="font-size: 11px; color: var(--verde);"><i class="fa-solid fa-lock mr-1"></i>Ambiente Criptografado</span>
+        </label>
+        
+        <input type="text" id="m1-card" required placeholder="Número do Cartão: 0000 0000 0000 0000" style="margin-bottom: 10px;">
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label for="m1-card-exp" class="sr-only">Expiração (MM/AA) *</label>
+            <input type="text" id="m1-card-exp" required placeholder="MM/AA">
+          </div>
+          <div>
+            <label for="m1-card-cvv" class="sr-only">Código CVV *</label>
+            <input type="text" id="m1-card-cvv" required placeholder="CVV">
+          </div>
+        </div>
+      </div>
+
+      <p class="note" style="margin-top: 12px; font-size: 11.5px;">
+        <i class="fa-solid fa-shield-cat text-rosa mr-1"></i> Garantia Risco Zero: Nenhuma cobrança durante os 14 dias. Cancele com 1 clique a qualquer momento.
+      </p>
+
+      <button type="submit" class="btn" style="width: 100%; margin-top: 16px; padding: 14px;">
+        Confirmar &amp; Iniciar 14 Dias Grátis
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL 2: AGENDAMENTO ENTERPRISE -->
+<div id="modal-enterprise" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="enterprise-title">
+  <div class="modal-card">
+    <button type="button" class="modal-close close-modal" aria-label="Fechar modal"><i class="fa-solid fa-xmark"></i></button>
+
+    <div class="badge-verde" style="margin-bottom: 6px;"><i class="fa-solid fa-building"></i> Atendimento Corporativo</div>
+    <h3 id="enterprise-title" style="margin-bottom: 4px;">Agendar Demonstração Enterprise</h3>
+    <p class="note">Conversa técnica com nossos especialistas em suinocultura e software.</p>
+
+    <div style="background: var(--superficie-2); padding: 14px; border-radius: 10px; border: 1px solid var(--linha); margin: 16px 0; font-size: 12.5px;" class="note">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+        <span>Granjas de suínos simuladas:</span>
+        <strong id="modal-ent-farms" class="text-white">15 granjas</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span>Estimativa Recorrente:</span>
+        <strong id="modal-ent-price" class="text-verde">R$ 2.698,75/mês</strong>
+      </div>
+    </div>
+
+    <form id="form-modal-enterprise" class="space-y-3">
+      <div>
+        <label for="m2-nome">Nome do Solicitante / Gestor *</label>
+        <input type="text" id="m2-nome" required placeholder="Ex: Dr. Carlos Mendes">
+      </div>
+
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+          <label for="m2-empresa">Nome da Integradora *</label>
+          <input type="text" id="m2-empresa" required placeholder="Ex: Cooperativa AgroSuíno">
+        </div>
+        <div>
+          <label for="m2-cargo">Cargo / Função *</label>
+          <input type="text" id="m2-cargo" required placeholder="Ex: Gerente de TI / Zootecnista">
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+          <label for="m2-email">E-mail Corporativo *</label>
+          <input type="email" id="m2-email" required placeholder="carlos@agrosuino.com">
+        </div>
+        <div>
+          <label for="m2-whats">WhatsApp de Contato *</label>
+          <input type="tel" id="m2-whats" required placeholder="(54) 99888-7777">
+        </div>
+      </div>
+
+      <div>
+        <label for="m2-horario">Preferência de Horário para Reunião</label>
+        <select id="m2-horario">
+          <option>Manhã (08h às 12h)</option>
+          <option>Tarde (13h às 18h)</option>
+          <option>Qualquer horário comercial</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn sec" style="width: 100%; margin-top: 18px; padding: 14px; background: #ffffff; color: #0d1513; border-color: #ffffff;">
+        Agendar Demonstração Técnica
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL POP-UP DE ALERTA DETALHADO -->
+<div id="modal-alerta" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="alerta-title">
+  <div class="modal-card">
+    <button type="button" class="modal-close close-modal" aria-label="Fechar modal"><i class="fa-solid fa-xmark"></i></button>
+    <div id="alerta-badge" class="badge-rosa" style="margin-bottom: 8px;">
+      <i class="fa-solid fa-triangle-exclamation"></i> Alerta Detectado
+    </div>
+    <h3 id="alerta-title" style="margin-bottom: 6px; font-size: 20px; color: #ffffff;">Detalhamento do Alerta Zootécnico</h3>
+    <p class="note" style="margin-bottom: 18px;">Análise automática gerada pelo algoritmo da plataforma SuinoTech.</p>
+
+    <div style="background: var(--superficie-2); border: 1px solid var(--linha); border-radius: 12px; padding: 20px; margin-bottom: 18px;">
+      <div>
+        <span class="note" style="text-transform: uppercase; font-weight: 700; color: var(--suave);">Diagnóstico do Lote de Porcos</span>
+        <p id="alerta-diag" style="margin: 4px 0 0; font-weight: 600; color: #ffffff; font-size: 15px;"></p>
+      </div>
+      <div style="border-top: 1px solid rgba(42,61,54,0.6); padding-top: 12px; margin-top: 12px;">
+        <span class="note" style="text-transform: uppercase; font-weight: 700; color: var(--suave);">Causa Provável no Galpão</span>
+        <p id="alerta-causa" style="margin: 4px 0 0; color: var(--texto); font-size: 14px;"></p>
+      </div>
+      <div style="border-top: 1px solid rgba(42,61,54,0.6); padding-top: 12px; margin-top: 12px;">
+        <span class="note" style="text-transform: uppercase; font-weight: 700; color: var(--suave);">Impacto Financeiro Estimado</span>
+        <div id="alerta-impacto" style="font-weight: 700; font-size: 17px; color: var(--rosa); margin-top: 2px;"></div>
+      </div>
+    </div>
+
+    <div style="background: rgba(63, 163, 124, 0.12); border: 1px solid var(--verde); border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+      <span class="note" style="text-transform: uppercase; font-weight: 700; color: var(--verde);">
+        <i class="fa-solid fa-lightbulb mr-1"></i> Recomendação de Manejo
+      </span>
+      <p id="alerta-rec" style="margin: 6px 0 0; font-size: 14px; color: #ffffff; line-height: 1.55;"></p>
+    </div>
+<div style="background: var(--superficie-2); border: 1px solid var(--linha); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <span class="note" style="text-transform: uppercase; font-weight: 700; color: var(--amber);">
+      <i class="fa-solid fa-boxes-stacked mr-1"></i> Almoxarifado Veterinário · Status do Estoque
+    </span>
+    <span class="badge-rosa" style="font-size: 10px;">Atenção</span>
+  </div>
+  <ul style="list-style: none; padding: 0; margin: 0; font-size: 13px;" class="space-y-2">
+    <li style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--linha); padding-bottom: 6px;">
+      <span><i class="fa-solid fa-syringe text-rosa mr-1.5"></i> Vacina Circovírus</span>
+      <strong style="color: var(--rosa);">15 doses (Estoque Mínimo)</strong>
+    </li>
+    <li style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--linha); padding-bottom: 6px;">
+      <span><i class="fa-solid fa-pump-soap text-amber mr-1.5"></i> Desinfetante Instalações</span>
+      <strong style="color: var(--amber);">Vencimento em 12 dias</strong>
+    </li>
+    <li style="display: flex; justify-content: space-between;">
+      <span><i class="fa-solid fa-pills text-verde mr-1.5"></i> Vermífugo Terminação</span>
+      <strong style="color: var(--verde);">OK (320 doses em estoque)</strong>
+    </li>
+  </ul>
+</div>
+    <button type="button" class="btn close-modal" style="width: 100%; margin: 0;">Entendido / Fechar</button>
+  </div>
+</div>
+
+<!-- FOOTER RODAPÉ FULL WIDTH -->
+<footer>
+  <div class="wrap" style="display: flex; flex-direction: column; gap: 20px; align-items: center; text-align: center;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <a class="logo" href="#inicio" style="font-size: 20px;">
+        <img src="SUINOTECH.svg" alt="SuinoTech" width="28" height="28">
+        <span>Suino<span>Tech</span></span>
+      </a>
+      <span>® 2026 - Soluções Inteligentes para Suinocultura</span>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; font-size: 14px;">
+      <a href="#inicio"> Início</a>
+      <a href="#quem-somos"> Quem Somos</a>
+      <a href="#mercado"> Mercado</a>
+      <a href="#como-funciona"> Como Funciona</a>
+      <a href="#funcionalidades"> Funcionalidades</a>
+      <a href="#planos"> Planos &amp; Precificação</a>
+      <a href="#contato"> Contato</a>
+    </div>
+
+    <p class="note" style="max-width: 800px; margin-top: 10px; font-size: 11.5px;">
+      Ressalva Acadêmica: O SuinoTech é uma proposta desenvolvida no âmbito de um projeto integrador acadêmico. Todos os preços, simulações e dados exibidos neste site são modelos puramente ilustrativos para acompanhamento da plataforma.
+    </p>
+  </div>
+</footer>
+
+<!-- ==========================================================================
+     LÓGICA JAVASCRIPT (NAVEGAÇÃO 8 PÁGINAS, SIMULADORES E GRÁFICOS)
+     ========================================================================== -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // ==========================================
+  // UTILITÁRIOS GLOBAIS
+  // ==========================================
+  const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+
+  const toast = document.getElementById('toast');
+  const toastMessage = document.getElementById('toast-message');
+  function showToast(msg) {
+    if (!toast || !toastMessage) return;
+    toastMessage.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 4000);
+  }
+
+  // ==========================================
+  // TEMA CLARO / ESCURO
+  // ==========================================
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const themeIcon = themeToggleBtn?.querySelector('i');
+  const themeLabel = themeToggleBtn?.querySelector('.theme-label');
+
+  function aplicarTema(tema) {
+    document.documentElement.setAttribute('data-theme', tema);
+    document.body.classList.toggle('light-mode', tema === 'light');
+    localStorage.setItem('suinotech_theme', tema);
+
+    if (themeIcon && themeLabel) {
+      if (tema === 'light') {
+        themeIcon.className = 'fa-solid fa-sun text-amber';
+        themeLabel.textContent = 'Claro';
+      } else {
+        themeIcon.className = 'fa-solid fa-moon text-rosa';
+        themeLabel.textContent = 'Escuro';
+      }
+    }
+  }
+
+  const temaSalvo = localStorage.getItem('suinotech_theme') ||
+    (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  aplicarTema(temaSalvo);
+
+  themeToggleBtn?.addEventListener('click', () => {
+    const temaAtual = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    aplicarTema(temaAtual === 'dark' ? 'light' : 'dark');
+  });
+
+  // ==========================================
+  // 1. NAVEGAÇÃO ENTRE AS PÁGINAS (SPA)
+  // ==========================================
+  const pages = document.querySelectorAll('.page');
+  const navLinks = document.querySelectorAll('nav#nav a, nav.bottom a, footer a');
+  const menuBtn = document.getElementById('mbtn');
+  const navMenu = document.getElementById('nav');
+
+  if (menuBtn && navMenu) {
+    menuBtn.addEventListener('click', () => {
+      const aberto = navMenu.classList.toggle('aberto');
+      menuBtn.setAttribute('aria-expanded', aberto);
+    });
+  }
+
+  function renderPage() {
+    let hash = window.location.hash || '#inicio';
+    let pageId = hash;
+    let targetSubElement = null;
+
+    if (hash === '#painel' || hash === '#demo') {
+      pageId = '#inicio';
+    } else if (hash === '#comparativo' || hash === '#faq') {
+      pageId = '#planos';
+    } else if (hash === '#perfis-pag' || hash === '#perfis-atendimento') {
+      pageId = '#quem-somos';
+    }
+
+    let pageMatch = null;
+    try {
+      if (hash !== pageId) {
+        targetSubElement = document.querySelector(hash);
+      }
+      pageMatch = document.querySelector(`.page${pageId}`);
+    } catch (e) {
+      pageId = '#inicio';
+    }
+
+    if (!pageMatch) pageMatch = document.querySelector('.page#inicio');
+
+    pages.forEach(p => p.classList.remove('on'));
+    if (pageMatch) pageMatch.classList.add('on');
+
+    if (pageId === '#inicio' && typeof renderPainel === 'function') renderPainel();
+    if (pageId === '#mercado' && typeof initMercado === 'function') initMercado();
+
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href === pageId || (href === hash && href.startsWith('#'))) {
+        link.classList.add('on');
+      } else {
+        link.classList.remove('on');
+      }
+    });
+
+    if (navMenu) {
+      navMenu.classList.remove('aberto');
+      if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    if (targetSubElement) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          targetSubElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('hashchange', renderPage);
+
+  // ==========================================
+  // 2. MODAIS E FORMULÁRIOS
+  // ==========================================
+  let savedScrollY = 0;
+  const modalTrial = document.getElementById('modal-trial');
+  const modalEnterprise = document.getElementById('modal-enterprise');
+
+  function openModal(modal) {
+    if (!modal) return;
+    savedScrollY = window.scrollY;
+    modal.classList.add('active');
+    document.body.style.top = `-${savedScrollY}px`;
+    document.body.classList.add('modal-open');
+  }
+
+  function closeModal(modal) {
+    if (!modal) return;
+    modal.classList.remove('active');
+    document.body.classList.remove('modal-open');
+    document.body.style.top = '';
+    window.scrollTo(0, savedScrollY);
+  }
+
+  document.querySelectorAll('.close-modal').forEach(btn => {
+    btn.addEventListener('click', () => {
+      closeModal(btn.closest('.modal-overlay'));
+    });
+  });
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal(overlay);
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m));
+    }
+  });
+
+  document.getElementById('btn-open-trial')?.addEventListener('click', () => openModal(modalTrial));
+  document.getElementById('btn-banner-trial')?.addEventListener('click', () => openModal(modalTrial));
+  document.getElementById('btn-open-enterprise')?.addEventListener('click', () => openModal(modalEnterprise));
+  document.getElementById('btn-banner-enterprise')?.addEventListener('click', () => openModal(modalEnterprise));
+
+  function validateForm(form) {
+    const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+    let valid = true;
+    inputs.forEach(input => {
+      if (!input.value.trim()) {
+        input.style.borderColor = 'var(--rosa)';
+        valid = false;
+      } else {
+        input.style.borderColor = 'var(--linha)';
+      }
+    });
+    return valid;
+  }
+
+  document.getElementById('form-modal-trial')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!validateForm(e.target)) {
+      showToast('Por favor, preencha todos os campos do formulário.');
+      return;
+    }
+    closeModal(modalTrial);
+    e.target.reset();
+    showToast('Conta de teste de 14 dias criada com sucesso! Verifique seu e-mail.');
+  });
+
+  document.getElementById('form-modal-enterprise')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!validateForm(e.target)) {
+      showToast('Por favor, preencha todos os campos da solicitação.');
+      return;
+    }
+    closeModal(modalEnterprise);
+    e.target.reset();
+    showToast('Solicitação recebida! Nossa equipe técnica entrará em contato em até 2 horas.');
+  });
+
+  document.getElementById('form-contato')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!validateForm(e.target)) {
+      showToast('Por favor, preencha todos os campos obrigatórios de contato.');
+      return;
+    }
+    e.target.reset();
+    showToast('Mensagem enviada com sucesso! Obrigado pelo contato.');
+  });
+
+  // ==========================================
+  // 3. FAQ ACCORDION
+  // ==========================================
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+
+      document.querySelectorAll('.faq-item').forEach(i => {
+        i.classList.remove('open');
+        const q = i.querySelector('.faq-question');
+        if (q) q.setAttribute('aria-expanded', 'false');
+      });
+
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  // ==========================================
+  // 4. CARROSSEL DE IMAGENS
+  // ==========================================
+  const slides = document.querySelectorAll('.carousel-slide');
+  const dots = document.querySelectorAll('.carousel-dot');
+  const btnPrev = document.getElementById('slide-prev');
+  const btnNext = document.getElementById('slide-next');
+  let currentSlide = 0;
+  let slideInterval = null;
+
+  function showSlide(index) {
+    if (!slides.length) return;
+    slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+    currentSlide = index;
+  }
+
+  function nextSlide() {
+    showSlide((currentSlide + 1) % slides.length);
+  }
+
+  function prevSlide() {
+    showSlide((currentSlide - 1 + slides.length) % slides.length);
+  }
+
+  function startAutoSlide() {
+    if (slideInterval) clearInterval(slideInterval);
+    slideInterval = setInterval(nextSlide, 5000);
+  }
+
+  function stopAutoSlide() {
+    if (slideInterval) clearInterval(slideInterval);
+  }
+
+  if (btnNext && btnPrev) {
+    btnNext.addEventListener('click', () => { nextSlide(); startAutoSlide(); });
+    btnPrev.addEventListener('click', () => { prevSlide(); startAutoSlide(); });
+  }
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      showSlide(parseInt(dot.dataset.index, 10));
+      startAutoSlide();
+    });
+  });
+
+  const carouselElem = document.getElementById('hero-carousel');
+  if (carouselElem) {
+    carouselElem.addEventListener('mouseenter', stopAutoSlide);
+    carouselElem.addEventListener('mouseleave', startAutoSlide);
+    carouselElem.addEventListener('focusin', stopAutoSlide);
+    carouselElem.addEventListener('focusout', startAutoSlide);
+    startAutoSlide();
+  }
+
+  // ==========================================
+  // 5. PRECIFICAÇÃO (PRODUTOR & INTEGRADORA)
+  // ==========================================
+  let isAnnual = true;
+  let producerCap = 1000;
+  let excessAnimals = 0;
+  let integratorFarms = 15;
+
+  const billingToggle = document.getElementById('billing-toggle');
+  const labelMonthly = document.getElementById('label-monthly');
+  const labelAnnual = document.getElementById('label-annual');
+  const producerRange = document.getElementById('producer-range');
+  const producerCapDisplay = document.getElementById('producer-cap-display');
+  const producerCapText = document.getElementById('producer-cap-text');
+  const producerPriceDisplay = document.getElementById('producer-price-display');
+  const producerBillingInfo = document.getElementById('producer-billing-info');
+  const presetBtns = document.querySelectorAll('.btn-preset');
+  const excessMinus = document.getElementById('excess-minus');
+  const excessPlus = document.getElementById('excess-plus');
+  const excessCountDisplay = document.getElementById('excess-count-display');
+  const excessCostDisplay = document.getElementById('excess-cost-display');
+  const integratorRange = document.getElementById('integrator-range');
+  const integratorFarmsDisplay = document.getElementById('integrator-farms-display');
+  const integratorRateText = document.getElementById('integrator-rate-text');
+  const integratorSubtotalText = document.getElementById('integrator-subtotal-text');
+  const integratorPriceDisplay = document.getElementById('integrator-price-display');
+  const integratorBillingInfo = document.getElementById('integrator-billing-info');
+  const modalTrialSummary = document.getElementById('modal-trial-summary');
+  const modalTrialPrice = document.getElementById('modal-trial-price');
+  const modalEntFarms = document.getElementById('modal-ent-farms');
+  const modalEntPrice = document.getElementById('modal-ent-price');
+
+  if (billingToggle) {
+    const toggleAction = () => {
+      isAnnual = !isAnnual;
+      billingToggle.classList.toggle('active', isAnnual);
+      billingToggle.setAttribute('aria-checked', isAnnual);
+
+      if (isAnnual) {
+        labelAnnual.style.color = 'var(--rosa)';
+        labelAnnual.style.fontWeight = '700';
+        labelMonthly.style.color = 'var(--texto)';
+        labelMonthly.style.fontWeight = '400';
+      } else {
+        labelMonthly.style.color = 'var(--rosa)';
+        labelMonthly.style.fontWeight = '700';
+        labelAnnual.style.color = 'var(--texto)';
+        labelAnnual.style.fontWeight = '400';
+      }
+      updatePricing();
+    };
+
+    billingToggle.addEventListener('click', toggleAction);
+    billingToggle.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleAction();
+      }
+    });
+  }
+
+  const profileFilterBtns = document.querySelectorAll('#profile-filters button');
+  const cardProducer = document.getElementById('card-producer');
+  const cardIntegrator = document.getElementById('card-integrator');
+
+  profileFilterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      profileFilterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      if (cardProducer) cardProducer.style.display = (filter === 'all' || filter === 'producer') ? 'block' : 'none';
+      if (cardIntegrator) cardIntegrator.style.display = (filter === 'all' || filter === 'integrator') ? 'block' : 'none';
+    });
+  });
+
+  function calculateProducerBasePrice(cap) {
+    if (cap <= 500) return 150;
+    if (cap <= 1000) return 150 + ((cap - 500) / 500) * 60;
+    if (cap <= 1500) return 210 + ((cap - 1000) / 500) * 70;
+    return 280 + ((cap - 1500) / 500) * 70;
+  }
+
+  function calculateIntegratorFarmsCost(farms) {
+    if (farms <= 20) return farms * 45;
+    if (farms <= 50) return (20 * 45) + ((farms - 20) * 40);
+    return (20 * 45) + (30 * 40) + ((farms - 50) * 35);
+  }
+
+  function updatePricing() {
+    presetBtns.forEach(btn => {
+      const isSelected = parseInt(btn.dataset.cap, 10) === producerCap;
+      btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+      btn.classList.toggle('sec', !isSelected);
+    });
+
+    const baseMonthly = calculateProducerBasePrice(producerCap);
+    const monthlyPrice = baseMonthly * (isAnnual ? 0.8 : 1.0);
+    const annualTotal = monthlyPrice * 12;
+    const savingsAnnual = (baseMonthly * 12) - annualTotal;
+
+    if (producerCapDisplay) producerCapDisplay.innerHTML = `${producerCap.toLocaleString('pt-BR')} <small style="font-size: 12px; color: var(--suave); font-weight:400;">cabeças</small>`;
+    if (producerCapText) producerCapText.textContent = `${producerCap.toLocaleString('pt-BR')} cabeças`;
+    if (producerPriceDisplay) producerPriceDisplay.innerHTML = `${formatBRL(monthlyPrice)}<small>/mês</small>`;
+
+    if (producerBillingInfo) {
+      producerBillingInfo.innerHTML = isAnnual
+        ? `Faturado anualmente (${formatBRL(annualTotal)}/ano) • <strong class="text-rosa">Economia de ${formatBRL(savingsAnnual)}</strong>`
+        : `<span style="color: var(--amber);"><i class="fa-solid fa-circle-info mr-1"></i> Mude para o plano Anual para economizar 20%</span>`;
+    }
+
+    const excessBlocks = Math.ceil(excessAnimals / 100);
+    const excessMonthlyCost = excessBlocks * 25;
+    const totalProducerMonthlyWithExcess = monthlyPrice + excessMonthlyCost;
+
+    if (excessCountDisplay) excessCountDisplay.textContent = `+${excessAnimals} cab.`;
+    if (excessCostDisplay) {
+      excessCostDisplay.innerHTML = excessAnimals > 0
+        ? `+${excessBlocks} bloco(s) (+${formatBRL(excessMonthlyCost)}/mês)<br>Total: <strong class="text-white">${formatBRL(totalProducerMonthlyWithExcess)}/mês</strong>`
+        : 'Nenhum excedente';
+    }
+
+    if (modalTrialSummary) {
+      let textCap = `${producerCap.toLocaleString('pt-BR')} cabeças`;
+      if (excessAnimals > 0) textCap += ` (+${excessAnimals} excedentes)`;
+      modalTrialSummary.textContent = `Plano Produtor (${textCap} - ${isAnnual ? 'Anual' : 'Mensal'})`;
+    }
+    if (modalTrialPrice) modalTrialPrice.textContent = `${formatBRL(totalProducerMonthlyWithExcess)}/mês`;
+
+    const farmsTotalMonthly = calculateIntegratorFarmsCost(integratorFarms);
+    let farmRateText = "R$ 45,00/mês";
+    if (integratorFarms > 50) farmRateText = "R$ 35,00/mês (Média Escalonada)";
+    else if (integratorFarms > 20) farmRateText = "R$ 40,00/mês (Média Escalonada)";
+
+    const integratorMonthlyFinal = (2500 + farmsTotalMonthly) * (isAnnual ? 0.85 : 1.0);
+
+    if (integratorFarmsDisplay) integratorFarmsDisplay.innerHTML = `${integratorFarms} <small style="font-size: 12px; color: var(--suave); font-weight:400;">granjas</small>`;
+    if (integratorRateText) integratorRateText.textContent = farmRateText;
+    if (integratorSubtotalText) integratorSubtotalText.textContent = `${formatBRL(farmsTotalMonthly)}/mês`;
+    if (integratorPriceDisplay) integratorPriceDisplay.innerHTML = `${formatBRL(integratorMonthlyFinal)}<small>/mês</small>`;
+
+    if (integratorBillingInfo) {
+      integratorBillingInfo.innerHTML = isAnnual
+        ? `<span class="badge-verde" style="font-size:11px;">Inclui 15% de desconto no contrato Anual Enterprise</span>`
+        : `<span style="color: var(--amber); font-size:12px;"><i class="fa-solid fa-circle-info mr-1"></i> Alterne para o contrato Anual para 15% de desconto</span>`;
+    }
+
+    if (modalEntFarms) modalEntFarms.textContent = `${integratorFarms} granjas`;
+    if (modalEntPrice) modalEntPrice.textContent = `${formatBRL(integratorMonthlyFinal)}/mês`;
+  }
+
+  producerRange?.addEventListener('input', (e) => {
+    producerCap = parseInt(e.target.value, 10);
+    updatePricing();
+  });
+
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      producerCap = parseInt(btn.dataset.cap, 10);
+      if (producerRange) producerRange.value = producerCap;
+      updatePricing();
+    });
+  });
+
+  excessMinus?.addEventListener('click', () => {
+    excessAnimals = Math.max(0, excessAnimals - 50);
+    updatePricing();
+  });
+
+  excessPlus?.addEventListener('click', () => {
+    excessAnimals += 50;
+    updatePricing();
+  });
+
+  integratorRange?.addEventListener('input', (e) => {
+    integratorFarms = parseInt(e.target.value, 10);
+    updatePricing();
+  });
+
+  updatePricing();
+
+  // ==========================================
+  // 6. PAINEL DEMONSTRATIVO & GRÁFICOS
+  // ==========================================
+  function dispararPopUpAlerta(objetoAlerta) {
+    const modalAlerta = document.getElementById('modal-alerta');
+    if (!modalAlerta) return;
+
+    const isWarning = objetoAlerta.tipo === 'alerta';
+    const badge = document.getElementById('alerta-badge');
+    if (badge) {
+      badge.className = isWarning ? 'badge-rosa' : 'badge-verde';
+      badge.innerHTML = `<i class="fa-solid ${isWarning ? 'fa-triangle-exclamation' : 'fa-circle-check'}"></i> ${isWarning ? 'Alerta Detectado' : 'Desempenho Otimizado'}`;
+    }
+
+    document.getElementById('alerta-title').textContent = objetoAlerta.texto;
+    document.getElementById('alerta-diag').textContent = objetoAlerta.diag || 'Desempenho dentro dos parâmetros operacionais do galpão.';
+    document.getElementById('alerta-causa').textContent = objetoAlerta.causa || 'Monitoramento zootécnico de rotina.';
+
+    const elemImpacto = document.getElementById('alerta-impacto');
+    if (elemImpacto) {
+      elemImpacto.textContent = objetoAlerta.impacto || 'Sem impacto negativo estimado.';
+      elemImpacto.style.color = isWarning ? 'var(--rosa)' : 'var(--verde)';
+    }
+
+    document.getElementById('alerta-rec').textContent = objetoAlerta.rec || 'Manter o manejo atual no galpão.';
+    openModal(modalAlerta);
+  }
+
+  const defaultLotesData = [
+    {
+      id: 'Lote Terminação 1', racao: 2.38, gpd: 890, mortalidade: 1.2, preco: 6.80, custoRacao: 390.00, sanidade: 22.00, agua: 8.00, energia: 10.00, status: 'Ok',
+      alertas: [
+        {
+          texto: 'Conversão alimentar otimizada nos porcos (2.38)', tipo: 'ok',
+          diag: 'Desempenho nutricional dos suínos 3% superior à meta da linhagem.',
+          causa: 'Formulação balanceada na fábrica de ração e regulagem correta de comedouros.',
+          impacto: 'Economia estimada de R$ 12,40 por porco alojado',
+          rec: 'Manter a rotina atual de regulagem de comedouros.'
+        },
+        {
+          texto: 'Mortalidade sob controle no galpão (1.2%)', tipo: 'ok',
+          diag: 'Lote de porcos com cobertura vacinal e vermifugação completas.',
+          causa: 'Cumprimento estrito do protocolo sanitário e biosseguridade.',
+          impacto: 'Redução drástica de perdas zootécnicas',
+          rec: 'Continuar monitorando a curva de consumo diário nos comedouros.'
+        }
+      ]
+    },
+    {
+      id: 'Lote Terminação 2', racao: 2.65, gpd: 780, mortalidade: 4.0, preco: 6.80, custoRacao: 435.00, sanidade: 28.00, agua: 9.00, energia: 12.00, status: 'Alerta',
+      alertas: [
+        {
+          texto: 'Desperdício de ração detectado nos comedouros (+11%)', tipo: 'alerta',
+          diag: 'Consumo de ração acima da curva esperada para o ganho de peso dos porcos.',
+          causa: 'Abertura excessiva das bandejas dos comedouros no galpão 2.',
+          impacto: 'Custo extra de R$ 45,00 por animal alojado',
+          rec: 'Reajustar a abertura da bandeja dos comedouros do galpão imediatamente.'
+        },
+        {
+          texto: 'Consumo elétrico elevado na climatização', tipo: 'alerta',
+          diag: 'Gasto energético dos exaustores 20% superior à média histórica.',
+          causa: 'Excesso de acionamento por falha no sensor de temperatura do galpão.',
+          impacto: '+ R$ 2,00 por cabeça no custo operacional',
+          rec: 'Calibrar os sensores de temperatura e verificar a vedação das cortinas.'
+        }
+      ]
+    },
+    {
+      id: 'Lote Creche / Matrizes', racao: 2.42, gpd: 850, mortalidade: 1.8, preco: 6.80, custoRacao: 400.00, sanidade: 20.00, agua: 7.50, energia: 9.50, status: 'Ok',
+      alertas: [
+        {
+          texto: 'GPD de 850g/dia atingido no plantel', tipo: 'ok',
+          diag: 'Ganho de peso diário acumulado dentro da meta projetada.',
+          causa: 'Excelente palatabilidade da ração na fase de crescimento.',
+          impacto: 'Antecipação do lote em 3 dias para a entrega no frigorífico',
+          rec: 'Manter o programa nutricional planejado.'
+        }
+      ]
+    }
+  ];
+
+  let lotesData = JSON.parse(JSON.stringify(defaultLotesData));
+  try {
+    const saved = localStorage.getItem('suinotech_lotes_data');
+    if (saved) lotesData = JSON.parse(saved);
+  } catch (e) {}
+
+  let selectedLotIdx = 0;
+  const seletorContainer = document.getElementById('seletor');
+  const alertasContainer = document.getElementById('alertas');
+  const gaugeVal = document.getElementById('gauge-val');
+  const gaugeRing = document.getElementById('gauge-ring');
+  const leituraDisplay = document.getElementById('leitura');
+
+  const explicacoes = {
+    racao: { titulo: 'Conversão Alimentar (kg/kg)', desc: 'Quantidade de ração em quilos necessária para o porco ganhar 1 kg de peso vivo.', detalhe: '<strong>Impacto na Granja:</strong> A alimentação representa até 75% dos custos da suinocultura. Quanto menor este valor, maior a margem financeira.', icone: 'fa-wheat-awn' },
+    gpd: { titulo: 'Ganho de Peso Diário - GPD (g/dia)', desc: 'Ganho médio de massa corporal dos porcos por dia ao longo da fase.', detalhe: '<strong>Impacto na Granja:</strong> GPD alto reduz os dias de alojamento e otimiza o giro do galpão.', icone: 'fa-chart-line' },
+    mortalidade: { titulo: 'Mortalidade Acumulada (%)', desc: 'Percentual de perdas de animais no lote em relação ao total alojado.', detalhe: '<strong>Impacto na Granja:</strong> Indica a eficiência sanitária e do manejo diário nos galpões.', icone: 'fa-triangle-exclamation' },
+    preco: { titulo: 'Preço de Venda do Suíno (R$/kg)', desc: 'Valor de cotação do suíno vivo no mercado regional.', detalhe: '<strong>Fórmula:</strong> Base para cálculo da Receita Bruta (Preço x Peso final de abate de 115 kg).', icone: 'fa-tags' },
+    custoRacao: { titulo: 'Custo Ração (R$/cab)', desc: 'Despesa acumulada de ração por porco alojado.', detalhe: '<strong>Cálculo:</strong> Multiplicação do ganho de peso pelo custo por kg da dieta por fase nutricional.', icone: 'fa-coins' },
+    sanidade: { titulo: 'Sanidade & Vacinas (R$/cab)', desc: 'Investimento por cabeça em vacinação, vermifugação e medicamentos.', detalhe: '<strong>Prevenção:</strong> Manter o protocolo sanitário em dia reduz perdas por mortalidade no galpão.', icone: 'fa-kit-medical' },
+    agua: { titulo: 'Água (R$/cab)', desc: 'Rateio de despesas com captação, tratamento e dessedentação por porco.', detalhe: '<strong>Controle:</strong> Monitoramento da vazão diária por cabeça no galpão.', icone: 'fa-droplet' },
+    energia: { titulo: 'Energia Elétrica (R$/cab)', desc: 'Gasto com ventiladores, climatização, iluminação e motores de comedouros.', detalhe: '<strong>Conforto Térmico:</strong> Crucial para otimizar o consumo nas fases de creche e terminação.', icone: 'fa-bolt' },
+    btnAplicar: { titulo: 'Aplicar ao Lote', desc: 'Recalcula o Índice SuinoTech e os gráficos instantaneamente.', detalhe: '<strong>Tecnologia:</strong> Grava as alterações na memória local do navegador.', icone: 'fa-check' },
+    btnReset: { titulo: 'Restaurar Exemplo', desc: 'Restaura os valores demonstrativos padrão do lote.', detalhe: '<strong>Padrão:</strong> Limpa as edições personalizadas e retorna aos dados originais.', icone: 'fa-rotate-left' }
+  };
+
+  function atualizarGuia(key) {
+    const item = explicacoes[key];
+    if (!item) return;
+    document.getElementById('info-title').textContent = item.titulo;
+    document.getElementById('info-desc').textContent = item.desc;
+    document.getElementById('info-details').innerHTML = item.detalhe;
+    document.getElementById('info-icon').className = `fa-solid ${item.icone} text-xl`;
+  }
+
+  function setupEditForm() {
+    const fieldsContainer = document.getElementById('ed-campos');
+    if (!fieldsContainer) return;
+    const lot = lotesData[selectedLotIdx];
+
+    fieldsContainer.innerHTML = `
+      <fieldset style="border: none; padding: 0; margin: 0;">
+        <legend class="sr-only">Parâmetros operacionais e financeiros do lote de suínos</legend>
+        <div class="grid-inputs" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; width: 100%;">
+          <div>
+            <label for="ed-racao" style="display: block; font-size: 11.5px; font-weight: bold; margin-bottom: 6px;">Conversão (kg/kg)</label>
+            <input type="number" step="0.01" id="ed-racao" value="${lot.racao}" required data-key="racao">
+          </div>
+          <div>
+            <label for="ed-gpd" style="display: block; font-size: 11.5px; font-weight: bold; margin-bottom: 6px;">GPD (g/dia)</label>
+            <input type="number" step="1" id="ed-gpd" value="${lot.gpd || 890}" required data-key="gpd">
+          </div>
+          <div>
+            <label for="ed-mort" style="display: block; font-size: 11.5px; font-weight: bold; margin-bottom: 6px;">Mortalidade (%)</label>
+            <input type="number" step="0.1" id="ed-mort" value="${lot.mortalidade || 1.2}" required data-key="mortalidade">
+          </div>
+          <div>
+            <label for="ed-preco" style="display: block; font-size: 11.5px; font-weight: bold; margin-bottom: 6px;">Preço Suíno (R$/kg)</label>
+            <input type="number" step="0.10" id="ed-preco" value="${(lot.preco || 6.80).toFixed(2)}" required data-key="preco">
+          </div>
+          <div>
+            <label for="ed-custo-racao" style="display: block; font-size: 11.5px; font-weight: bold; margin-bottom: 6px;">Ração (R$/cab)</label>
+            <input type="number" step="1" id="ed-custo-racao" value="${(lot.custoRacao || 390).toFixed(2)}" required data-key="custoRacao">
+          </div>
+          <div>
+            <label for="ed-sanidade" style="display: block; font-size: 11.5px; font-weight: bold; margin-bottom: 6px;">Sanidade (R$/cab)</label>
+            <input type="number" step="1" id="ed-sanidade" value="${(lot.sanidade || 22).toFixed(2)}" required data-key="sanidade">
+          </div>
+          <div>
+            <label for="ed-agua" style="display: block; font-size: 11.5px; font-weight: bold; margin-bottom: 6px;">Água (R$/cab)</label>
+            <input type="number" step="0.50" id="ed-agua" value="${(lot.agua || 8.00).toFixed(2)}" required data-key="agua">
+          </div>
+          <div>
+            <label for="ed-energia" style="display: block; font-size: 11.5px; font-weight: bold; margin-bottom: 6px;">Energia (R$/cab)</label>
+            <input type="number" step="0.50" id="ed-energia" value="${(lot.energia || 10.00).toFixed(2)}" required data-key="energia">
+          </div>
+        </div>
+      </fieldset>
+    `;
+
+    fieldsContainer.querySelectorAll('input').forEach(input => {
+      const key = input.dataset.key;
+      input.addEventListener('mouseenter', () => atualizarGuia(key));
+      input.addEventListener('focus', () => atualizarGuia(key));
+    });
+  }
+
+  document.getElementById('btn-aplicar')?.addEventListener('mouseenter', () => atualizarGuia('btnAplicar'));
+  document.getElementById('ed-reset')?.addEventListener('mouseenter', () => atualizarGuia('btnReset'));
+
+  document.getElementById('ed')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const lot = lotesData[selectedLotIdx];
+
+    const racaoInput = parseFloat(document.getElementById('ed-racao').value);
+    const gpdInput = parseFloat(document.getElementById('ed-gpd').value);
+    const mortInput = parseFloat(document.getElementById('ed-mort').value);
+    const precoInput = parseFloat(document.getElementById('ed-preco').value);
+    const custoInput = parseFloat(document.getElementById('ed-custo-racao').value);
+    const sanidadeInput = parseFloat(document.getElementById('ed-sanidade').value);
+    const aguaInput = parseFloat(document.getElementById('ed-agua').value);
+    const energiaInput = parseFloat(document.getElementById('ed-energia').value);
+
+    lot.racao = !isNaN(racaoInput) ? racaoInput : lot.racao;
+    lot.gpd = !isNaN(gpdInput) ? gpdInput : lot.gpd;
+    lot.mortalidade = !isNaN(mortInput) ? mortInput : lot.mortalidade;
+    lot.preco = !isNaN(precoInput) ? precoInput : lot.preco;
+    lot.custoRacao = !isNaN(custoInput) ? custoInput : lot.custoRacao;
+    lot.sanidade = !isNaN(sanidadeInput) ? sanidadeInput : lot.sanidade;
+    lot.agua = !isNaN(aguaInput) ? aguaInput : lot.agua;
+    lot.energia = !isNaN(energiaInput) ? energiaInput : lot.energia;
+
+    lot.animal = (115 * lot.preco) - (lot.custoRacao + lot.sanidade + lot.agua + lot.energia);
+
+    if (lot.racao > 2.5) {
+      lot.status = 'Alerta';
+      lot.alertas = [
+        {
+          texto: `Desperdício de ração detectado nos comedouros (${lot.racao.toFixed(2)} kg/kg)`,
+          tipo: 'alerta',
+          diag: `A conversão alimentar de ${lot.racao.toFixed(2)} kg/kg ultrapassa o limite recomendado para suínos de 2.45 kg/kg.`,
+          causa: 'Abertura excessiva das bandejas dos comedouros ou problemas no alimento.',
+          impacto: `Custo direto de ração elevado para R$ ${lot.custoRacao.toFixed(2)} por porco.`,
+          rec: 'Regule imediatamente os comedouros no galpão de terminação.'
+        },
+        {
+          texto: 'Atenção aos manejos de sanidade e energia',
+          tipo: 'alerta',
+          diag: 'Custos operacionais somados acima da meta do lote.',
+          causa: 'Gasto elevado em climatização ou vacinação emergencial.',
+          impacto: `Custos operacionais somam R$ ${(lot.sanidade + lot.agua + lot.energia).toFixed(2)} por cabeça.`,
+          rec: 'Revise os insumos veterinários e o funcionamento dos exaustores.'
+        }
+      ];
+    } else {
+      lot.status = 'Ok';
+      lot.alertas = [
+        {
+          texto: `Conversão alimentar otimizada (${lot.racao.toFixed(2)} kg/kg)`,
+          tipo: 'ok',
+          diag: `Conversão de ${lot.racao.toFixed(2)} kg/kg dentro da faixa ideal (≤ 2.45 kg/kg).`,
+          causa: 'Excelente eficiência nutricional e regulagem dos galpões.',
+          impacto: `Margem estimada mantida em R$ ${lot.animal.toFixed(2)} por porco.`,
+          rec: 'Manter a rotina atual de manejo e biossegurança.'
+        },
+        {
+          texto: 'Sanidade sob controle no galpão',
+          tipo: 'ok',
+          diag: 'Despesas veterinárias dentro dos parâmetros recomendados.',
+          causa: 'Protocolos de medicação e vacinas cumpridos em dia.',
+          impacto: 'Baixa taxa de mortalidade e alto GPD do plantel.',
+          rec: 'Manter o acompanhamento sanitário preventivo.'
+        }
+      ];
+    }
+
+    try { localStorage.setItem('suinotech_lotes_data', JSON.stringify(lotesData)); } catch (err) {}
+
+    renderPainel();
+    const edMsg = document.getElementById('ed-msg');
+    if (edMsg) {
+      edMsg.textContent = 'Valores aplicados com sucesso!';
+      edMsg.style.color = 'var(--verde)';
+      setTimeout(() => { edMsg.textContent = ''; }, 3000);
+    }
+  });
+
+  document.getElementById('ed-reset')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    lotesData = JSON.parse(JSON.stringify(defaultLotesData));
+    try { localStorage.removeItem('suinotech_lotes_data'); } catch (err) {}
+    const edMsg = document.getElementById('ed-msg');
+    if (edMsg) edMsg.textContent = '';
+    renderPainel();
+    showToast('Dados de exemplo restaurados.');
+  });
+
+  let chartRacaoInstance = null;
+  let chartAnimalInstance = null;
+  let chartGpdInstance = null;
+
+  function updateCharts(lot) {
+    if (typeof Chart === 'undefined') return;
+    const ctxRacao = document.getElementById('cRacao')?.getContext('2d');
+    const ctxAnimal = document.getElementById('cAnimal')?.getContext('2d');
+    const ctxGpd = document.getElementById('cGpd')?.getContext('2d');
+
+    if (ctxRacao) {
+      if (chartRacaoInstance) chartRacaoInstance.destroy();
+      chartRacaoInstance = new Chart(ctxRacao, {
+        type: 'bar',
+        data: {
+          labels: ['Meta Ideal', lot.id],
+          datasets: [{
+            data: [2.35, lot.racao],
+            backgroundColor: ['#3fa37c', lot.racao > 2.5 ? '#ff4d8d' : '#3fa37c'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(42,61,54,0.4)' }, ticks: { color: '#8fa39b' } },
+            x: { grid: { display: false }, ticks: { color: '#8fa39b' } }
+          }
+        }
+      });
+    }
+
+    if (ctxAnimal) {
+      if (chartAnimalInstance) chartAnimalInstance.destroy();
+      const cOperacionais = (lot.sanidade || 22) + (lot.agua || 8) + (lot.energia || 10);
+      const lucroVal = lot.animal !== undefined ? lot.animal : ((115 * (lot.preco || 6.80)) - ((lot.custoRacao || 390) + cOperacionais));
+
+      chartAnimalInstance = new Chart(ctxAnimal, {
+        type: 'bar',
+        data: {
+          labels: ['Ração', 'Sanidade', 'Água', 'Energia', 'Lucro/Cab.'],
+          datasets: [{
+            data: [lot.custoRacao || 390, lot.sanidade || 22, lot.agua || 8.00, lot.energia || 10.00, lucroVal],
+            backgroundColor: ['#8fa39b', '#f59e0b', '#3b82f6', '#eab308', '#ff4d8d'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(42,61,54,0.4)' }, ticks: { color: '#8fa39b' } },
+            x: { grid: { display: false }, ticks: { color: '#8fa39b' } }
+          }
+        }
+      });
+    }
+
+    if (ctxGpd) {
+      if (chartGpdInstance) chartGpdInstance.destroy();
+      const fatorGpd = (lot.gpd || 890) / 890;
+
+      chartGpdInstance = new Chart(ctxGpd, {
+        type: 'line',
+        data: {
+          labels: ['Sem 1', 'Sem 4', 'Sem 8', 'Sem 12', 'Sem 16'],
+          datasets: [
+            {
+              label: 'Lote Atual (g/dia)',
+              data: [
+                Math.round(350 * fatorGpd),
+                Math.round(620 * fatorGpd),
+                Math.round(850 * fatorGpd),
+                Math.round(980 * fatorGpd),
+                Math.round(920 * fatorGpd)
+              ],
+              borderColor: lot.racao > 2.5 ? '#ff4d8d' : '#3fa37c',
+              backgroundColor: lot.racao > 2.5 ? 'rgba(255, 77, 141, 0.15)' : 'rgba(63, 163, 124, 0.15)',
+              fill: true,
+              tension: 0.35,
+              borderWidth: 2,
+              pointRadius: 4
+            },
+            {
+              label: 'Padrão Linhagem',
+              data: [340, 600, 830, 950, 900],
+              borderColor: '#8fa39b',
+              borderDash: [4, 4],
+              fill: false,
+              tension: 0.35,
+              borderWidth: 1.5,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true, position: 'top', labels: { color: '#8fa39b', font: { size: 10 }, boxWidth: 12 } }
+          },
+          scales: {
+            y: { beginAtZero: false, min: 200, max: 1100, grid: { color: 'rgba(42,61,54,0.4)' }, ticks: { color: '#8fa39b', stepSize: 200 } },
+            x: { grid: { display: false }, ticks: { color: '#8fa39b' } }
+          }
+        }
+      });
+    }
+  }
+
+  function renderPainel() {
+    if (!seletorContainer) return;
+    seletorContainer.innerHTML = '';
+
+    lotesData.forEach((lote, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = lote.id;
+      btn.setAttribute('aria-pressed', idx === selectedLotIdx);
+      btn.addEventListener('click', () => {
+        selectedLotIdx = idx;
+        renderPainel();
+      });
+      seletorContainer.appendChild(btn);
+    });
+
+    const currentLot = lotesData[selectedLotIdx];
+    const custosOperacionaisSoma = (currentLot.sanidade || 22) + (currentLot.agua || 8.0) + (currentLot.energia || 10.0);
+    const lucroCabeca = currentLot.animal !== undefined
+      ? currentLot.animal
+      : ((115 * (currentLot.preco || 6.80)) - ((currentLot.custoRacao || 390) + custosOperacionaisSoma));
+
+    const elemAnimal = document.getElementById('kpi-animal-val');
+    const elemRacao = document.getElementById('kpi-racao-val');
+    const elemCusto = document.getElementById('kpi-custo-val');
+    const elemCustosVal = document.getElementById('kpi-custos-val');
+    const elemCustosDet = document.getElementById('kpi-custos-detalhe');
+
+    if (elemAnimal) elemAnimal.textContent = formatBRL(lucroCabeca);
+    if (elemRacao) elemRacao.innerHTML = `${currentLot.racao.toFixed(2)} <small style="font-size: 12px; color: var(--suave);">kg/kg</small>`;
+    if (elemCusto) elemCusto.textContent = formatBRL(currentLot.custoRacao || 390);
+    if (elemCustosVal) elemCustosVal.textContent = formatBRL(custosOperacionaisSoma);
+    if (elemCustosDet) {
+      elemCustosDet.textContent = `San.: ${formatBRL(currentLot.sanidade || 22)} | Água: ${formatBRL(currentLot.agua || 8)} | Energ.: ${formatBRL(currentLot.energia || 10)}`;
+    }
+
+    const recBrutaCab = 115 * (currentLot.preco || 6.80);
+    const impostoCab = recBrutaCab * 0.025;
+    const recLiqCab = recBrutaCab - impostoCab;
+    const cpvCab = currentLot.custoRacao || 390;
+    const operCab = custosOperacionaisSoma;
+    const lucroBrutoCab = recLiqCab - cpvCab - operCab;
+    const cabecasLote = 1000;
+
+    if (document.getElementById('dre-receita-cab')) {
+      document.getElementById('dre-receita-cab').textContent = formatBRL(recBrutaCab);
+      document.getElementById('dre-receita-tot').textContent = formatBRL(recBrutaCab * cabecasLote);
+      document.getElementById('dre-imposto-cab').textContent = `- ${formatBRL(impostoCab)}`;
+      document.getElementById('dre-imposto-tot').textContent = `- ${formatBRL(impostoCab * cabecasLote)}`;
+      document.getElementById('dre-rec-liq-cab').textContent = formatBRL(recLiqCab);
+      document.getElementById('dre-rec-liq-tot').textContent = formatBRL(recLiqCab * cabecasLote);
+      document.getElementById('dre-cpv-cab').textContent = `- ${formatBRL(cpvCab)}`;
+      document.getElementById('dre-cpv-tot').textContent = `- ${formatBRL(cpvCab * cabecasLote)}`;
+      document.getElementById('dre-oper-cab').textContent = `- ${formatBRL(operCab)}`;
+      document.getElementById('dre-oper-tot').textContent = `- ${formatBRL(operCab * cabecasLote)}`;
+      document.getElementById('dre-lucro-cab').textContent = formatBRL(lucroBrutoCab);
+      document.getElementById('dre-lucro-tot').textContent = formatBRL(lucroBrutoCab * cabecasLote);
+    }
+
+    if (alertasContainer) {
+      alertasContainer.innerHTML = '';
+      currentLot.alertas.forEach(altObj => {
+        const li = document.createElement('li');
+        const alertaData = (typeof altObj === 'string') ? {
+          texto: altObj,
+          tipo: (altObj.includes('Desperdício') || altObj.includes('elevado') || altObj.includes('Atenção')) ? 'alerta' : 'ok',
+          diag: 'Análise automática do parâmetro alterado.',
+          causa: 'Ajuste de simulação efetuado.',
+          impacto: 'Variação direta no resultado financeiro por cabeça.',
+          rec: 'Verifique os parâmetros no simulador.'
+        } : altObj;
+
+        const isWarning = alertaData.tipo === 'alerta';
+        li.className = isWarning ? 'a' : 'o';
+        li.innerHTML = `
+          <i class="fa-solid ${isWarning ? 'fa-triangle-exclamation' : 'fa-circle-check'} icon-badge"></i>
+          <span style="flex:1; font-weight: 500;">${alertaData.texto}</span>
+          <i class="fa-solid fa-chevron-right" style="font-size: 11px; opacity: 0.5;"></i>
+        `;
+        li.addEventListener('click', () => dispararPopUpAlerta(alertaData));
+        alertasContainer.appendChild(li);
+      });
+    }
+
+    const scoreCA = Math.max(0, Math.min(100, 100 - ((currentLot.racao - 2.30) / 0.50) * 100));
+    const scoreGPD = Math.max(0, Math.min(100, ((currentLot.gpd || 890) / 1000) * 100));
+    const scoreMort = Math.max(0, Math.min(100, 100 - ((currentLot.mortalidade || 1.2) * 10)));
+    const custoTotalKg = (cpvCab + operCab) / 115;
+    const scoreCusto = Math.max(0, Math.min(100, 100 - ((custoTotalKg - 3.50) / 1.50) * 100));
+    const scoreMargem = Math.max(0, Math.min(100, (lucroBrutoCab / 400) * 100));
+
+    const indexVal = Math.round(
+      (scoreCA * 0.30) + (scoreGPD * 0.20) + (scoreMort * 0.20) + (scoreCusto * 0.15) + (scoreMargem * 0.15)
+    );
+
+    if (gaugeVal) gaugeVal.textContent = indexVal;
+    if (gaugeRing) {
+      gaugeRing.style.strokeDashoffset = 314.15 - (indexVal / 100) * 314.15;
+      gaugeRing.style.stroke = indexVal >= 80 ? 'var(--verde)' : 'var(--rosa)';
+    }
+    if (leituraDisplay) {
+      leituraDisplay.textContent = indexVal >= 80 ? 'Desempenho Excelente (Acima da Meta)' : 'Atenção Requerida no Galpão';
+      leituraDisplay.style.color = indexVal >= 80 ? 'var(--verde)' : 'var(--rosa)';
+    }
+
+    setupEditForm();
+    updateCharts(currentLot);
+  }
+
+  // Exportação PDF e Excel
+  document.getElementById('btn-export-pdf')?.addEventListener('click', () => {
+    showToast('Abrindo janela de impressão / PDF...');
+    setTimeout(() => { window.print(); }, 500);
+  });
+
+  document.getElementById('btn-export-excel')?.addEventListener('click', () => {
+    const lot = lotesData[selectedLotIdx];
+    const custosOperacionais = (lot.sanidade || 22) + (lot.agua || 8) + (lot.energia || 10);
+    const lucroCalculado = lot.animal !== undefined
+      ? lot.animal
+      : ((115 * (lot.preco || 6.80)) - ((lot.custoRacao || 390) + custosOperacionais));
+
+    let csvContent = "\uFEFF";
+    csvContent += "RELATÓRIO ZOOTÉCNICO E FINANCEIRO - SUINOTECH\n";
+    csvContent += `Lote Analisado;${lot.id}\n`;
+    csvContent += `Status do Lote;${lot.status}\n\n`;
+    csvContent += "Indicador;Valor Unitário/Métrica\n";
+    csvContent += `Conversão Alimentar;${lot.racao.toFixed(2).replace('.', ',')} kg/kg\n`;
+    csvContent += `Preço de Venda do Suíno;R$ ${(lot.preco || 6.80).toFixed(2).replace('.', ',')} / kg\n`;
+    csvContent += `Custo Ração por Cabeça;R$ ${(lot.custoRacao || 390).toFixed(2).replace('.', ',')}\n`;
+    csvContent += `Custo Sanidade por Cabeça;R$ ${(lot.sanidade || 22).toFixed(2).replace('.', ',')}\n`;
+    csvContent += `Custo Água por Cabeça;R$ ${(lot.agua || 8).toFixed(2).replace('.', ',')}\n`;
+    csvContent += `Custo Energia por Cabeça;R$ ${(lot.energia || 10).toFixed(2).replace('.', ',')}\n`;
+    csvContent += `Margem Estimada por Cabeça;R$ ${lucroCalculado.toFixed(2).replace('.', ',')}\n`;
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const nomeArquivo = `SuinoTech_Relatorio_${lot.id.replace(/[^a-zA-Z0-9]/g, '_')}.csv`;
+
+    link.setAttribute("href", url);
+    link.setAttribute("download", nomeArquivo);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showToast(`Relatório Excel (${nomeArquivo}) descarregado com sucesso!`);
+  });
+
+  // Botão de Sincronização Nuvem
+  document.getElementById('btn-sync-status')?.addEventListener('click', function () {
+    const btn = this;
+    btn.innerHTML = `<span style="background: var(--amber);"></span> <strong style="color: var(--amber);">🟡 Sincronizando...</strong>`;
+    showToast('Sincronizando 12 registros coletados offline no galpão...');
+
+    setTimeout(() => {
+      btn.innerHTML = `<span style="background: var(--verde);"></span> <strong style="color: var(--verde);">🟢 Nuvem Sincronizada</strong> (Dados atualizados)`;
+      showToast('Sincronização com o banco de dados concluída com sucesso!');
+    }, 2000);
+  });
+
+  // ==========================================
+  // 7. PLAYER DE VÍDEO
+  // ==========================================
+  const playBtn = document.getElementById('play');
+  const capaVideo = document.getElementById('capa');
+  const videoVid = document.getElementById('vid');
+  const ctlBox = document.getElementById('ctl');
+  const ppBtn = document.getElementById('pp');
+  const rstBtn = document.getElementById('rst');
+
+  if (playBtn && capaVideo && videoVid) {
+    playBtn.addEventListener('click', () => {
+      capaVideo.style.display = 'none';
+      videoVid.hidden = false;
+      if (ctlBox) ctlBox.hidden = false;
+      videoVid.play().catch(() => {});
+      showToast('Vídeo demonstrativo iniciado.');
+    });
+  }
+
+  ppBtn?.addEventListener('click', () => {
+    if (!videoVid) return;
+    if (videoVid.paused) {
+      videoVid.play();
+      ppBtn.textContent = 'Pausar';
+    } else {
+      videoVid.pause();
+      ppBtn.textContent = 'Continuar';
+    }
+  });
+
+  rstBtn?.addEventListener('click', () => {
+    if (!videoVid) return;
+    videoVid.currentTime = 0;
+    videoVid.play();
+    if (ppBtn) ppBtn.textContent = 'Pausar';
+  });
+
+  // ==========================================
+  // 8. MERCADO, FORMULADOR DE RAÇÃO E COTAÇÕES
+  // ==========================================
+  const dbMercado = {
+    suinos: {
+      MG: { precoKg: 6.36, variacao: '-1,70%', tipo: 'Posto', bolsa: 6.30, fonte: 'Cepea/Esalq', data: '09/11/2026' },
+      SP: { precoKg: 6.35, variacao: '-1,24%', tipo: 'Posto', bolsa: 6.67, fonte: 'Cepea/Esalq', data: '09/11/2026' },
+      RS: { precoKg: 5.56, variacao: '-1,42%', tipo: 'A retirar', bolsa: 5.92, fonte: 'Cepea/Esalq', data: '09/11/2026' },
+      SC: { precoKg: 5.52, variacao: '-1,43%', tipo: 'A retirar', bolsa: 5.92, fonte: 'Cepea/Esalq', data: '09/11/2026' },
+      PR: { precoKg: 5.33, variacao: '-1,66%', tipo: 'A retirar', bolsa: 5.90, fonte: 'Cepea/Esalq', data: '09/11/2026' },
+      MT: { precoKg: 5.80, variacao: '0,00%', tipo: 'Referencial', bolsa: 5.80, fonte: 'Notícias Agrícolas', data: '09/11/2026' }
+    },
+    insumos: {
+      milho: { precoSaca: 66.88, kgSaca: 60, variacao: '+0,16%', data: '09/11/2026' },
+      soja: { precoSaca: 159.00, kgSaca: 60, data: '10/11/2026' }
+    }
+  };
+
+  let estMercado = 'RS';
+  let unMercado = 'kg';
+
+  const historicoMercado = {
+    meses: ['Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov'],
+    suinoRS: [5.80, 5.75, 5.70, 5.65, 5.64, dbMercado.suinos.RS.precoKg],
+    suinoSC: [5.75, 5.70, 5.68, 5.62, 5.60, dbMercado.suinos.SC.precoKg],
+    suinoPR: [5.60, 5.55, 5.50, 5.45, 5.42, dbMercado.suinos.PR.precoKg],
+    milhoTon: [1120, 1150, 1180, 1160, 1140, Number(((dbMercado.insumos.milho.precoSaca / 60) * 1000).toFixed(2))],
+    sojaTon: [2080, 2100, 2120, 2140, 2580, Number(((dbMercado.insumos.soja.precoSaca / 60) * 1000).toFixed(2))]
+  };
+
+  let chartCotacaoInstance = null;
+  let chartInsumosInstance = null;
+
+  function obterCustoKgRacaoAtual() {
+    const milhoPct = parseFloat(document.getElementById('f-milho')?.value || 70) / 100;
+    const sojaPct = parseFloat(document.getElementById('f-soja')?.value || 22) / 100;
+    const nucleoPct = parseFloat(document.getElementById('f-nucleo')?.value || 8) / 100;
+
+    const pMilhoTon = (dbMercado.insumos.milho.precoSaca / dbMercado.insumos.milho.kgSaca) * 1000;
+    const pSojaTon = (dbMercado.insumos.soja.precoSaca / dbMercado.insumos.soja.kgSaca) * 1000;
+    const pNucleoTon = 6500.00;
+
+    return ((milhoPct * pMilhoTon) + (sojaPct * pSojaTon) + (nucleoPct * pNucleoTon)) / 1000;
+  }
+
+  function calcMercado() {
+    const alojados = parseFloat(document.getElementById('m-alojados')?.value || 1000);
+    const mortalidadePct = parseFloat(document.getElementById('m-mortalidade')?.value || 2.0) / 100;
+    const pesoMedio = parseFloat(document.getElementById('m-peso')?.value || 115);
+    const conversao = parseFloat(document.getElementById('m-conversao')?.value || 2.40);
+
+    const precoBaseKg = dbMercado.suinos[estMercado]?.precoKg || 5.56;
+    const custoRacaoKg = conversao * obterCustoKgRacaoAtual();
+
+    const animaisVendidos = Math.round(alojados * (1 - mortalidadePct));
+    const quilosTotais = animaisVendidos * pesoMedio;
+    const receitaBruta = quilosTotais * precoBaseKg;
+    const custoRacaoTotal = quilosTotais * custoRacaoKg;
+    const margemEstimada = receitaBruta - custoRacaoTotal;
+
+    const elemPrecoBase = document.getElementById('m-preco-base');
+    const elemAnimais = document.getElementById('m-res-animais');
+    const elemReceita = document.getElementById('m-res-receita');
+    const elemMargem = document.getElementById('m-res-margem');
+
+    if (elemPrecoBase) elemPrecoBase.textContent = `${formatBRL(precoBaseKg)} / kg`;
+    if (elemAnimais) elemAnimais.textContent = `${animaisVendidos.toLocaleString('pt-BR')} cabeças`;
+    if (elemReceita) elemReceita.textContent = formatBRL(receitaBruta);
+    if (elemMargem) elemMargem.textContent = formatBRL(margemEstimada);
+  }
+
+  function calcFormulacaoRacao() {
+    const mVal = parseFloat(document.getElementById('f-milho')?.value || 0);
+    const sVal = parseFloat(document.getElementById('f-soja')?.value || 0);
+    const nVal = parseFloat(document.getElementById('f-nucleo')?.value || 0);
+    const somaPct = Math.round((mVal + sVal + nVal) * 100) / 100;
+
+    const elem = document.getElementById('f-res-ton');
+    if (!elem) return;
+
+    if (somaPct !== 100) {
+      elem.style.color = 'var(--rosa)';
+      elem.innerHTML = `Soma: ${somaPct}% <small style="display:block; font-size:12px; font-weight:400;">Ajuste para fechar 100%</small>`;
+      return;
+    }
+
+    const pMilhoTon = (dbMercado.insumos.milho.precoSaca / dbMercado.insumos.milho.kgSaca) * 1000;
+    const pSojaTon = (dbMercado.insumos.soja.precoSaca / dbMercado.insumos.soja.kgSaca) * 1000;
+    const pNucleoTon = 6500.00;
+
+    const custoTon = ((mVal / 100) * pMilhoTon) + ((sVal / 100) * pSojaTon) + ((nVal / 100) * pNucleoTon);
+    elem.style.color = 'var(--verde)';
+    elem.textContent = formatBRL(custoTon);
+    calcMercado();
+  }
+
+  ['f-milho', 'f-soja', 'f-nucleo'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', calcFormulacaoRacao);
+  });
+
+  document.querySelectorAll('#form-calculadora-m input').forEach(input => {
+    input.addEventListener('input', calcMercado);
+  });
+
+  function renderGraficosMercado() {
+    if (typeof Chart === 'undefined') return;
+    const ctxSuino = document.getElementById('cCotacaoSuino')?.getContext('2d');
+    const ctxInsumos = document.getElementById('cCotacaoInsumos')?.getContext('2d');
+
+    if (ctxSuino) {
+      if (chartCotacaoInstance) chartCotacaoInstance.destroy();
+      const dadosEstado = estMercado === 'RS' ? historicoMercado.suinoRS
+        : (estMercado === 'SC' ? historicoMercado.suinoSC : historicoMercado.suinoPR);
+
+      chartCotacaoInstance = new Chart(ctxSuino, {
+        type: 'line',
+        data: {
+          labels: historicoMercado.meses,
+          datasets: [{
+            label: `Suíno Vivo ${estMercado} (R$/kg)`,
+            data: dadosEstado,
+            borderColor: '#ff4d8d',
+            backgroundColor: 'rgba(255, 77, 141, 0.12)',
+            fill: true,
+            tension: 0.3,
+            borderWidth: 2,
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { grid: { color: 'rgba(42,61,54,0.4)' }, ticks: { color: '#8fa39b' } },
+            x: { grid: { display: false }, ticks: { color: '#8fa39b' } }
+          }
+        }
+      });
+    }
+
+    if (ctxInsumos) {
+      if (chartInsumosInstance) chartInsumosInstance.destroy();
+      chartInsumosInstance = new Chart(ctxInsumos, {
+        type: 'line',
+        data: {
+          labels: historicoMercado.meses,
+          datasets: [
+            { label: 'Milho (R$/ton)', data: historicoMercado.milhoTon, borderColor: '#3fa37c', borderWidth: 2, pointRadius: 3 },
+            { label: 'Soja (R$/ton)', data: historicoMercado.sojaTon, borderColor: '#f59e0b', borderWidth: 2, pointRadius: 3 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true, labels: { color: '#8fa39b', font: { size: 10 } } } },
+          scales: {
+            y: { grid: { color: 'rgba(42,61,54,0.4)' }, ticks: { color: '#8fa39b' } },
+            x: { grid: { display: false }, ticks: { color: '#8fa39b' } }
+          }
+        }
+      });
+    }
+  }
+
+  function initMercado() {
+    const s = dbMercado.suinos[estMercado] || dbMercado.suinos.RS;
+    const m = dbMercado.insumos.milho;
+    const sj = dbMercado.insumos.soja;
+
+    const pCalc = unMercado === 'kg' ? s.precoKg : s.precoKg * parseFloat(unMercado);
+    const gridSuinos = document.getElementById('grid-suinos');
+    if (gridSuinos) {
+      gridSuinos.innerHTML = `
+        <div class="card destaque" style="border-left: 4px solid var(--rosa); height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="badge-rosa"><i class="fa-solid fa-piggy-bank"></i> SUÍNO VIVO (${s.tipo}) · ${estMercado}</span>
+              <span style="font-size: 12px; color: #ff4d8d; font-weight: bold;">${s.variacao}</span>
+            </div>
+            <div style="font: 700 34px var(--titulos); color: var(--rosa); margin: 10px 0;">${formatBRL(pCalc)}</div>
+            <p class="note">Cepea/Esalq por ${unMercado === 'kg' ? 'kg vivo' : 'arroba (15 kg)'}</p>
+            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--linha); font-size: 13px;">
+              <span class="text-suave">Preço Referencial (Bolsa):</span> <strong>${formatBRL(s.bolsa)}/kg</strong>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-top:1px solid var(--linha); padding-top:10px; font-size:12.5px; color:var(--suave); margin-top: 12px;">
+            <span><strong>Fonte:</strong> ${s.fonte}</span>
+            <span><strong>Atualizado:</strong> ${s.data}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    const gridInsumos = document.getElementById('grid-insumos');
+    if (gridInsumos) {
+      gridInsumos.innerHTML = `
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="badge-verde"><i class="fa-solid fa-wheat-awn"></i> MILHO (CEPEA/ESALQ)</span>
+            <span style="font-size: 12px; color: #4caf50; font-weight: bold;">${m.variacao}</span>
+          </div>
+          <div style="font: 700 28px var(--titulos); color: #fff; margin: 10px 0;">${formatBRL(m.precoSaca)}</div>
+          <p class="note">por saca de ${m.kgSaca} kg · (${m.data})</p>
+        </div>
+        <div class="card">
+          <span class="badge-verde"><i class="fa-solid fa-seedling"></i> SOJA (PARANAGUÁ / RS)</span>
+          <div style="font: 700 28px var(--titulos); color: #fff; margin: 10px 0;">${formatBRL(sj.precoSaca)}</div>
+          <p class="note">por saca de ${sj.kgSaca} kg · (${sj.data})</p>
+        </div>
+      `;
+    }
+
+    const gridTroca = document.getElementById('grid-troca');
+    if (gridTroca) {
+      const pMilhoKg = m.precoSaca / m.kgSaca;
+      const pSojaKg = sj.precoSaca / sj.kgSaca;
+      gridTroca.innerHTML = `
+        <div class="card">
+          <h3 style="color:var(--amber);"><i class="fa-solid fa-scale-balanced"></i> RELAÇÃO SUÍNO × MILHO (${estMercado})</h3>
+          <div style="font: 700 30px var(--titulos); color:#fff; margin:10px 0;">${(s.precoKg / pMilhoKg).toFixed(2)} kg</div>
+          <p class="note">de milho por 1 kg de suíno vivo</p>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--amber);"><i class="fa-solid fa-scale-balanced"></i> RELAÇÃO SUÍNO × SOJA (${estMercado})</h3>
+          <div style="font: 700 30px var(--titulos); color:#fff; margin:10px 0;">${(s.precoKg / pSojaKg).toFixed(2)} kg</div>
+          <p class="note">de soja por 1 kg de suíno vivo</p>
+        </div>
+      `;
+    }
+
+    calcFormulacaoRacao();
+    renderGraficosMercado();
+  }
+
+  document.querySelectorAll('#filtro-estado button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#filtro-estado button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      estMercado = btn.dataset.uf;
+      initMercado();
+    });
+  });
+
+  document.querySelectorAll('#filtro-unidade button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#filtro-unidade button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      unMercado = btn.dataset.unit;
+      initMercado();
+    });
+  });
+
+  function oscilar(valor) {
+    const varPct = (Math.random() * 0.04) - 0.02;
+    return parseFloat((valor * (1 + varPct)).toFixed(2));
+  }
+
+  function atualizarCotacoes() {
+    Object.keys(dbMercado.suinos).forEach(uf => {
+      dbMercado.suinos[uf].precoKg = oscilar(dbMercado.suinos[uf].precoKg);
+    });
+    dbMercado.insumos.milho.precoSaca = oscilar(dbMercado.insumos.milho.precoSaca);
+    dbMercado.insumos.soja.precoSaca = oscilar(dbMercado.insumos.soja.precoSaca);
+
+    historicoMercado.suinoRS[historicoMercado.suinoRS.length - 1] = dbMercado.suinos.RS.precoKg;
+    historicoMercado.suinoSC[historicoMercado.suinoSC.length - 1] = dbMercado.suinos.SC.precoKg;
+    historicoMercado.suinoPR[historicoMercado.suinoPR.length - 1] = dbMercado.suinos.PR.precoKg;
+    historicoMercado.milhoTon[historicoMercado.milhoTon.length - 1] = Number(((dbMercado.insumos.milho.precoSaca / 60) * 1000).toFixed(2));
+    historicoMercado.sojaTon[historicoMercado.sojaTon.length - 1] = Number(((dbMercado.insumos.soja.precoSaca / 60) * 1000).toFixed(2));
+
+    initMercado();
+
+    const statusBadge = document.getElementById('badge-status-cotacao');
+    if (statusBadge) {
+      statusBadge.textContent = '🟢 Atualizado agora';
+      setTimeout(() => { statusBadge.textContent = '🔴 Ao Vivo'; }, 3000);
+    }
+  }
+
+  // Inicializa painel, mercado, rota atual e atualização periódica
+  renderPainel();
+  initMercado();
+  renderPage();
+  setInterval(atualizarCotacoes, 30000);
+});
+</script>
+</body>
+</html>
